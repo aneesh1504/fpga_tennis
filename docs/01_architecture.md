@@ -1,6 +1,6 @@
 # System and RTL Architecture
 
-This document is required reading for every implementation phase. It defines ownership, module boundaries, clock-domain behavior, data contracts, and the intended repository layout.
+This document is required reading for every implementation track. It defines module boundaries, clock-domain behavior, data contracts, and the intended repository layout. `plan.md` is authoritative for parallel file ownership and merge gates.
 
 ## 1. System ownership
 
@@ -88,6 +88,12 @@ The shadow bank must remain stable until the next request. This avoids tearing w
 fpga-motion-tennis/
 ├── README.md
 ├── STATUS.md
+├── status/
+│   ├── ios.md
+│   ├── transport.md
+│   ├── video.md
+│   ├── gameplay.md
+│   └── integration.md
 ├── docs/
 │   ├── hardware-manifest.md
 │   ├── protocol.md
@@ -157,7 +163,18 @@ fpga-motion-tennis/
         └── ContentView.swift
 ```
 
-The coding agent may adjust filenames, but it must retain these boundaries. Generated Vivado output should not be committed indiscriminately; record the exact Vivado version and reproducible IP-generation steps.
+Track agents must retain these boundaries and the ownership table in `plan.md`. Generated Vivado output should not be committed indiscriminately; record the exact Vivado version and reproducible IP-generation steps.
+
+### Parallel integration seams
+
+The interface-freeze stage creates compiling packages and module stubs at every cross-track seam:
+
+- Transport publishes validated `motion_sample_t` values plus health counters.
+- Gameplay consumes `motion_sample_t` and publishes `game_render_state_t` plus audio events.
+- Video consumes only `game_render_state_t`; scripted test-state generation is local to the video testbench/top.
+- Integration wires those seams in top-level modules without moving logic across ownership boundaries.
+
+Before F0, interfaces may change freely under the freeze owner. After F0, a track may extend an interface only through a reviewed, versioned contract change recorded in every affected status file. Private internal types remain under their track owner.
 
 ## 6. Key SystemVerilog types
 
@@ -281,4 +298,3 @@ Every layer emits `{valid, palette_index_or_rgb}` for the current pipelined coor
 - Add counters for received frames, CRC errors, framing errors, sequence gaps, FIFO overflow, and stale events.
 - Unit-test pure modules independently. Run lint/elaboration before behavioral simulation.
 - Do not optimize away observability until hardware bring-up is complete.
-

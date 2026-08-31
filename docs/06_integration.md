@@ -1,8 +1,14 @@
-# Phase 5 — Integration, Tuning, and Final Handoff
+# Integration — Tuning and Final Handoff
 
 ## Objective
 
 Combine the proven BLE, two-board UART, video, swing, and game subsystems into a dependable two-player experience. Add limited polish only after the integrated MVP is stable.
+
+## Entry criteria and ownership
+
+Begin full integration only after C2, C3, and G1 are marked passed with commit hashes in the track status files. Confirm every handoff commit is present in the integration branch before debugging cross-subsystem behavior.
+
+The integration owner exclusively edits `rtl/board_a_top.sv`, shared board/project build scripts, `config/`, `docs/hardware-manifest.md`, `docs/bringup-log.md`, `STATUS.md`, and `status/integration.md`. It may request fixes from track owners but should not move subsystem logic into top-level files.
 
 ## Integration order
 
@@ -116,4 +122,3 @@ Only after the MVP passes:
 - Higher sensor rate if measurements prove it improves control without increasing loss/latency.
 
 These are not required for the initial success criterion.
-

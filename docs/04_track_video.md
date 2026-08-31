@@ -1,8 +1,14 @@
-# Phase 3 — 720p Procedural Video Pipeline
+# Track — 720p Procedural Video Pipeline
 
 ## Objective
 
 Produce a stable 1280×720/60 Hz HDMI signal and render the complete visual vocabulary of the game without a full framebuffer. Establish timing and BRAM feasibility before complex gameplay is attached.
+
+This track starts after F0 and does not wait for BLE or board-link checkpoints. Drive the renderer with frozen `game_render_state_t` test fixtures until gameplay integration.
+
+## Ownership and handoff
+
+This track owns `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, and `status/video.md`. It consumes `video_types_pkg.sv` without editing it and does not edit top-level Board A integration or shared Vivado project files. Send required clock/IP/top-level changes to the integration owner through `status/video.md`.
 
 ## Design position
 
@@ -128,3 +134,4 @@ C3 passes when:
 - BRAM/LUT/FF/DSP utilization and clock configuration are recorded.
 - The video test scene can be rebuilt reproducibly from source and asset scripts.
 
+Record the implementation commit, timing/resource evidence, monitor test, and exact handoff ports in `status/video.md`. Integration may consume the track only after C3 is recorded as passed.

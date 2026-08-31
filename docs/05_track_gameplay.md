@@ -1,8 +1,14 @@
-# Phase 4 — Swing Recognition and Tennis Gameplay
+# Track — Swing Recognition and Tennis Gameplay
 
 ## Objective
 
 Turn validated motion samples into discrete racket swings and build a deterministic, testable fixed-point tennis simulation. Develop against recorded/synthetic sensor vectors first, then tune with hardware while reusing the stable transport and video paths.
+
+This track starts after F0 and does not wait for BLE, board-link, or HDMI hardware. Consume frozen `motion_sample_t` fixtures and validate `game_render_state_t` output in simulation.
+
+## Ownership and handoff
+
+This track owns `rtl/game/`, `rtl/audio/`, `sim/game/` (including gameplay vectors), and `status/gameplay.md`. Integration consumes its audio-event and synthesizer interfaces. Do not edit transport, video, shared packages, or Board A top-level files.
 
 ## Gameplay model
 
@@ -127,7 +133,7 @@ Physics/rules tests:
 
 Do not tune by changing many constants simultaneously. Record the threshold set and test result after each meaningful revision.
 
-## Phase exit criteria
+## Gate G1 — gameplay simulation readiness
 
 - All swing and gameplay unit tests pass.
 - Recorded traces classify intentional swings reliably without frequent double triggers.
@@ -135,5 +141,4 @@ Do not tune by changing many constants simultaneously. Record the threshold set 
 - Game state publishes clean frame snapshots to the existing renderer.
 - No transport/video checkpoint regression occurs.
 
-This phase intentionally has no new formal hardware checkpoint. Its verification feeds directly into the final integrated checkpoint C4.
-
+Record exact test commands/results, trace provenance, interface assumptions, and the gameplay commit in `status/gameplay.md`. G1 is a simulation readiness gate rather than a new formal hardware checkpoint; it must pass before integration consumes gameplay, and its hardware tuning continues toward C4.

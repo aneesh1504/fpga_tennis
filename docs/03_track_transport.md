@@ -1,8 +1,43 @@
-# Phase 2 — Board-to-Board Pmod UART
+# Track — Transport RTL and Board Link
 
 ## Objective
 
-Connect the two Boolean Boards so Board B forwards Player 2 frames to Board A while Board A continues receiving Player 1 directly. Prove stable simultaneous transport before adding gameplay.
+Implement and verify the complete byte path: BLE-side UART reception, frame unescaping, CRC and motion decoding, health tracking, and Board B forwarding to Board A. Prove C1 jointly with the iOS track and then prove stable simultaneous transport at C2.
+
+This track may start as soon as F0 passes. Develop against frozen golden vectors and UART testbenches while BLE discovery and the iOS app proceed in parallel.
+
+## Required inputs and ownership
+
+Read `plan.md`, `STATUS.md`, `status/transport.md`, `docs/01_architecture.md`, and this document. Gate F0 must be marked passed.
+
+This track exclusively owns `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport-specific build files, and `status/transport.md`. It consumes but does not edit frozen packages or vectors. It does not edit Board A top-level integration, `STATUS.md`, or shared hardware records; place verified pins, Vivado facts, counters, and evidence in `status/transport.md` for the integration owner.
+
+## BLE receive and decode path
+
+Implement in this order:
+
+1. `uart_rx.sv`: parameterized `CLOCK_HZ` and `BAUD`; valid pulse plus byte output; framing-error counter.
+2. `uart_tx.sv`: matching parameterization with explicit busy/ready behavior.
+3. `frame_unescaper.sv`: recognize `0x7D`, XOR the following byte with `0x20`, detect unescaped newline, enforce a maximum raw length, and recover after errors.
+4. `crc16_ccitt.sv`: streaming or bounded-block implementation matching the frozen golden vectors.
+5. `motion_packet_decoder.sv`: enforce exact 32-byte length, version, type, player ID, and CRC before pulsing `sample_valid`.
+6. Controller health logic: count frames, CRC failures, length failures, invalid type/version/player, sequence gaps, and age/stale state.
+
+Keep the last valid `motion_sample_t` stable until a new valid frame arrives. Invalid frames must never partially update controller state.
+
+### Receive-path simulation
+
+- UART reception at nominal baud and modest independent-clock mismatch.
+- Back-to-back frames and every payload byte value that needs escaping.
+- Signed little-endian reconstruction and all frozen golden vectors.
+- Truncated/oversized frames, unexpected terminal escape, extra byte, bad CRC, wrong version, and wrong player ID.
+- Invalid bytes followed by a valid frame to prove resynchronization.
+- Sequence wrap from `65535` to `0`.
+- Stale transition after the configured timeout and recovery on the next valid frame.
+
+## Joint checkpoint C1
+
+Coordinate the physical BLE runs described in `docs/02_track_ios_controller.md`. C1 passes only when both the app and this receive path meet the master checkpoint criteria on both phone/board pairs. Record RTL counters, tests, hardware evidence, and the tested app commit in `status/transport.md`.
 
 ## Physical wiring
 
@@ -42,7 +77,7 @@ flowchart LR
 - A malformed frame may still be forwarded; Board A is the authoritative validator. Board B may count delimiters for debug visibility.
 - Both serial links start at 115,200 baud. Keep baud parameters independent so later changes do not require module rewrites.
 
-For the reverse direction, implement the symmetrical Pmod-RX → FIFO → BLE-UART-TX path. It need not carry gameplay feedback until Phase 5, but proving the electrical/full-duplex path now reduces integration risk.
+For the reverse direction, implement the symmetrical Pmod-RX → FIFO → BLE-UART-TX path. It need not carry gameplay feedback until integration, but proving the electrical/full-duplex path now reduces integration risk.
 
 ## Board A receive integration
 
@@ -103,5 +138,4 @@ C2 passes when:
 - Full-duplex test traffic succeeds.
 - Exact wiring and XDC assignments are documented.
 
-After C2, freeze the motion wire protocol unless a demonstrated gameplay need requires a versioned change.
-
+After C2, record the transport commit and evidence in `status/transport.md` and hand the tested interfaces to integration. The motion wire protocol was already frozen at F0; any demonstrated change still follows the versioned cross-track change process.

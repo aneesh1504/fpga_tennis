@@ -75,34 +75,75 @@ flowchart LR
 
 Read [01_architecture.md](docs/01_architecture.md) for clock domains, module boundaries, interfaces, repository layout, and design rules.
 
-## 6. Execution phases
+## 6. Parallel execution model
 
-| Phase | Purpose | Required reading | Key checkpoint |
+Work begins with a short interface-freeze stage. Gate **F0** must pass before implementation tracks edit code. Once F0 passes, four tracks run concurrently; hardware dependencies block only the work that consumes them.
+
+```mermaid
+flowchart TD
+    F0["F0: freeze protocol, types, interfaces, and ownership"]
+    F0 --> IOS["iOS controller track"]
+    F0 --> TRANSPORT["Transport RTL track"]
+    F0 --> VIDEO["Video track"]
+    F0 --> GAME["Gameplay track"]
+    IOS --> C1["C1: BLE sensor path"]
+    TRANSPORT --> C1
+    C1 --> C2["C2: two-board path"]
+    TRANSPORT --> C2
+    VIDEO --> C3["C3: video path"]
+    GAME --> G1["G1: gameplay simulation gate"]
+    C2 --> INT["Integration"]
+    C3 --> INT
+    G1 --> INT
+    INT --> C4["C4: integrated game"]
+```
+
+| Stage/track | Purpose | Required reading | Gate |
 |---|---|---|---|
-| 1 | Prove iPhone motion → BLE → FPGA | [02_phase_ble_controller.md](docs/02_phase_ble_controller.md) | **C1:** Valid 50 Hz motion frames arrive for two minutes |
-| 2 | Prove Board B → Board A transport | [03_phase_board_link.md](docs/03_phase_board_link.md) | **C2:** Both players arrive at Board A for five minutes |
-| 3 | Establish the 720p renderer | [04_phase_video.md](docs/04_phase_video.md) | **C3:** Stable 720p60 output and timing closure |
-| 4 | Implement swing/gameplay logic | [05_phase_gameplay.md](docs/05_phase_gameplay.md) | No separate hardware gate; verify in simulation and integrate incrementally |
-| 5 | Integrate, tune, and package | [06_phase_integration.md](docs/06_phase_integration.md) | **C4:** Ten-minute playable two-player match |
+| Interface freeze | Lock the shared contracts and create the skeleton | [00_interface_freeze.md](docs/00_interface_freeze.md) | **F0:** Golden vectors, packages, interfaces, ownership, and stubs reviewed |
+| iOS controller | Core Motion, Core Bluetooth, Swift encoder, app UX | [02_track_ios_controller.md](docs/02_track_ios_controller.md) | Contributes the phone side of **C1** |
+| Transport RTL | UART, escaping, CRC, decoder, forwarding, health | [03_track_transport.md](docs/03_track_transport.md) | Contributes FPGA side of **C1**; owns **C2** |
+| Video | HDMI timing, renderer, sprites, compositor | [04_track_video.md](docs/04_track_video.md) | **C3:** Stable 720p60 and timing closure |
+| Gameplay | Swing recognition, physics, rules, deterministic simulation | [05_track_gameplay.md](docs/05_track_gameplay.md) | **G1:** Track exit criteria pass in simulation |
+| Integration | Top-level wiring, audio, hardware tuning, packaging | [06_integration.md](docs/06_integration.md) | **C4:** Ten-minute playable two-player match |
 
-Do not create extra formal checkpoints unless a newly discovered hardware constraint requires one. Normal unit tests and implementation milestones belong inside their phase, not in the master checkpoint list.
+F0 is a coordination gate, and G1 is a software/simulation readiness gate. C1–C4 remain the formal hardware/product checkpoints. Video and gameplay do not wait for C1 or C2; they develop against frozen types, stubs, and synthetic data.
 
-## 7. Coding-agent operating contract
+### Merge and dependency rules
 
-To prevent context bloat, an implementation agent should read only:
+- Freeze `rtl/packages/protocol_pkg.sv`, `game_types_pkg.sv`, `video_types_pkg.sv`, `docs/protocol.md`, and the golden protocol vectors at F0.
+- Changes to a frozen contract require all affected track owners to acknowledge a versioned update before code is merged.
+- C1 requires both the iOS and transport tracks. C1 alone gates live two-board BLE integration, not video or simulated gameplay.
+- Integration begins only after C2, C3, and G1 pass. The integration owner may begin harmless scaffolding earlier but may not claim subsystem readiness.
+- Merge shared-package changes before consumers, then track branches in the order transport/iOS, video, gameplay, and finally integration. Rebase or merge the current integration base before running each gate.
+- A failing downstream gate returns the defect to the owning track; do not patch around a broken contract in a top-level module.
+
+## 7. File ownership
+
+Only the named owner edits a path while parallel work is active.
+
+| Owner | Exclusive paths |
+|---|---|
+| Interface-freeze owner | `rtl/packages/`, `docs/protocol.md`, initial `sim/vectors/`, repository skeleton |
+| iOS owner | `ios-controller/`, iOS-side tests, `status/ios.md` |
+| Transport owner | `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport build files, `status/transport.md` |
+| Video owner | `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, `status/video.md` |
+| Gameplay owner | `rtl/game/`, `rtl/audio/`, `sim/game/`, `status/gameplay.md` |
+| Orchestration/integration owner | `rtl/board_a_top.sv`, board/project build scripts, `config/`, `docs/hardware-manifest.md`, `docs/bringup-log.md`, `STATUS.md`, `status/integration.md` |
+
+If a track needs a change outside its ownership, it records the requested change in its status file and hands it to the owning agent. The integration owner resolves shared build-file and top-level conflicts. Track agents must not opportunistically edit another track's files.
+
+## 8. Coding-agent operating contract
+
+To prevent context bloat, every implementation agent reads only:
 
 1. This file.
 2. [STATUS.md](STATUS.md).
 3. [01_architecture.md](docs/01_architecture.md).
-4. The single document for the current phase.
+4. Its assigned track document.
+5. Its matching file in `status/`.
 
-The agent should not reread completed phase documents unless a regression points back to them. At the end of each phase it must update `STATUS.md` with:
-
-- What was implemented.
-- Exact tests run and their results.
-- Hardware evidence collected.
-- Any discovered UUID, pin, clock, or IP information.
-- Remaining risks and the next phase.
+The orchestration owner also reads [00_interface_freeze.md](docs/00_interface_freeze.md) and may perform the freeze work directly or assign one owner while retaining `STATUS.md`. An agent should not load other track documents unless a failing interface or integration test requires them. Each track owner updates only its own status file with implemented work, exact test results, evidence, interface requests, risks, and its next action. Only the orchestration/integration owner updates `STATUS.md`.
 
 Additional rules:
 
@@ -113,8 +154,10 @@ Additional rules:
 - Prefer parameterized, independently testable modules over a monolithic top module.
 - Run simulation before synthesis and synthesis before programming hardware.
 - Treat Vivado timing failures and critical warnings as failures, not informational output.
+- Do not begin implementation before F0 is marked passed in `STATUS.md`.
+- Do not edit paths assigned to another active track.
 
-## 8. Key checkpoints
+## 9. Key checkpoints
 
 ### C1 — BLE sensor path
 
@@ -132,7 +175,7 @@ Board A drives a monitor at 1280×720/60 Hz with the vendor HDMI path. A test sc
 
 Two people complete a ten-minute match. Serves, hits, misses, bounds, net collisions, score transitions, reconnect/stale behavior, graphics, and audio remain coherent. Controls feel responsive on a display in Game Mode, with no recurring dropped-input bursts or visible video tearing.
 
-## 9. Primary risks and mitigations
+## 10. Primary risks and mitigations
 
 | Risk | Mitigation |
 |---|---|
@@ -145,7 +188,7 @@ Two people complete a ten-minute match. Serves, hits, misses, bounds, net collis
 | Phone/TV latency makes controls feel slow | Start at 50 Hz, avoid batching, use BLE writes without response with backpressure, use display Game Mode |
 | Project becomes a graphics-engine exercise | Keep perspective fixed, sprites small, palette limited, and gameplay authoritative |
 
-## 10. Safety and wiring constraints
+## 11. Safety and wiring constraints
 
 - Use male-to-male jumpers because the installed Pmod connectors are female sockets.
 - Wire `TX → RX`, `RX → TX`, and `GND → GND`.
