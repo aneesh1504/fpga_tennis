@@ -4,10 +4,10 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 
 ## Current state
 
-- Execution mode: Interface freeze, then four parallel tracks
-- Current gate: F0 — **passed**
+- Execution mode: Four parallel implementation tracks after F0
+- Current gate: C1/C2/C3/G1 development in parallel
 - Last completed gate/checkpoint: F0 interface freeze
-- Overall status: Frozen contracts accepted by all four consumer owners; implementation tracks are ready but not started
+- Overall status: iOS software handoff accepted; transport, video, and gameplay/audio implementation active; hardware gates remain open
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
 - Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
@@ -18,10 +18,10 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 | Work | State | Depends on | Detailed status |
 |---|---|---|---|
 | Interface freeze | Passed | All deliverables, reviews, and merged smoke tests passed | This file and `docs/00_interface_freeze.md` |
-| iOS controller | Ready | F0 passed | `status/ios.md` |
-| Transport RTL | Ready | F0 passed | `status/transport.md` |
-| Video | Ready | F0 passed | `status/video.md` |
-| Gameplay | Ready | F0 passed | `status/gameplay.md` |
+| iOS controller | Software complete; hardware pending | Physical iPhone/BLE/FPGA evidence | `status/ios.md` |
+| Transport RTL | In progress | F0 passed | `status/transport.md` |
+| Video | In progress | F0 passed | `status/video.md` |
+| Gameplay | In progress | F0 passed | `status/gameplay.md` |
 | Integration | Waiting | C2 + C3 + G1 | `status/integration.md` |
 
 ## Frozen interface record
@@ -75,10 +75,10 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | Not started | — |
-| C2 two-board path | Not started | — |
-| C3 video path | Not started | — |
-| G1 gameplay simulation | Not started | — |
+| C1 BLE sensor path | In progress; hardware pending | iOS software `3aaf1fb` accepted with 13 tests; transport implementation active |
+| C2 two-board path | In progress; hardware pending | Transport implementation active |
+| C3 video path | In progress; hardware pending | Video implementation active |
+| G1 gameplay simulation | In progress | Gameplay/audio implementation active |
 | C4 integrated game | Not started | — |
 
 ## F0 commands and results — 2026-08-30
@@ -91,13 +91,16 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | `git merge --no-edit origin/work/gameplay` | Pass; review commit `f27b234` merged |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` | Pass on merged `2083519`; 6 vectors, 21 Markdown files, package elaboration, and all 4 interface seams passed using Icarus Verilog 12.0 |
 | `git diff --check` and `git diff origin/main..HEAD --check` | Pass; no whitespace errors |
+| `git merge --ff-only origin/work/ios` | Pass; software implementation `3aaf1fb` and status `973d63e` merged |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` after iOS merge | Pass; 6 vectors, 22 Markdown files, package elaboration, and all 4 interface seams passed |
 
 ## Open issues and risks
 
 - The wire field is named `sequence_number` in SystemVerilog because `sequence` is a reserved keyword; consumers must use the frozen name.
 - No hardware was used. UUIDs, pins, board revisions, IP/tool versions, connector orientation, timing, delivery rates, and measurements remain unverified.
 - Frozen-contract changes now require a versioned proposal, updated vectors/tests, and every affected-owner acknowledgement.
+- C1 requires physical iPhone, BLE peripheral, and programmed-board evidence; simulator results do not satisfy it.
 
 ## Next action
 
-F0 is closed. Dispatch iOS, transport, video, and gameplay implementation only as separate owned work; no subsystem implementation was begun during review or closure.
+Continue the three Windows implementation tracks independently. Resolve `IOS-REQ-001` through the status-file message bus when physical iPhone/Boolean Board access is available, without blocking video or gameplay simulation.

@@ -1,7 +1,7 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: F0 passed; integration waiting for C2, C3, and G1
+- State: F0 passed; iOS software accepted; transport/video/gameplay active; full integration waiting for C2, C3, and G1
 - Track document: `docs/06_integration.md`
 - Integration commit: This F0 commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
@@ -10,7 +10,7 @@
 | Track/gate | Commit | Evidence reviewed | Accepted |
 |---|---|---|---|
 | F0 interface freeze | Freeze `8255a4c`; reviews `9e62763`, `7d10743`, `0c6f9cd`, `f27b234`; merged `2083519` | All four consumers accepted without changes; complete merged smoke suite passed | Yes |
-| iOS/C1 | — | — | No |
+| iOS/C1 | Software `3aaf1fb`; status `973d63e` | Xcode build-for-testing passed; simulator suite 13 passed, 0 failed/skipped; physical BLE/iPhone/FPGA evidence explicitly pending | Software accepted; C1 No |
 | Transport/C2 | — | — | No |
 | Video/C3 | — | — | No |
 | Gameplay/G1 | — | — | No |
@@ -59,18 +59,26 @@
 | `git merge --no-edit origin/work/gameplay` | Pass; `f27b234` merged |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` | Pass on merged `2083519` with Icarus Verilog 12.0: 6 protocol vectors; local links in 21 Markdown files; shared packages compile/elaborate; all four interface seams pass |
 | `git diff --check` and `git diff origin/main..HEAD --check` | Pass; no output |
+| `git merge --ff-only origin/work/ios` | Pass; commits `406f2a6`, `3aaf1fb`, and `973d63e` fast-forwarded onto main |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` after iOS handoff | Pass: 6 vectors; local links in 22 Markdown files; packages compile/elaborate; all four interface seams pass |
 
 No hardware was used, programmed, wired, or measured.
 
 ## Open cross-track requests
 
-None. Any future contract change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
+| Request | Target | Requested action | Relevant commit/interface | Gate impact | State |
+|---|---|---|---|---|---|
+| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | On a physical iPhone and programmed Boolean Board, record the advertised name, service UUID, writable characteristic UUID/properties, notify UUID/properties if present, maximum write-without-response length, device/iOS/app build, and observed discovery/connection result. Then coordinate a one-byte UART check and 50 Hz protocol-v1 stream once transport supplies the hardware build. Respond only in `status/ios.md`; do not infer absent values. | iOS `3aaf1fb`; protocol `1.0` / wire `0x01`; response `44d0f79`; transport build pending | Blocks C1; does not block C2 simulation, C3, or G1 | Acknowledged; waiting for connected/unlocked/trusted iPhone and programmed transport build |
+
+Any future contract change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
 
 ## Risks/blockers
 
 - Exact BLE UUIDs, writable/notify characteristics, payload limits, XDC source/pins, Pmod positions, Vivado/IP versions, board revisions, monitor mode, and all measurements are unverified.
 - Full integration remains blocked on accepted C2, C3, and G1 handoffs.
+- `IOS-REQ-001` requires physical hardware and remains open; iOS simulator evidence is accepted only as a software handoff.
+- The registered iPhone 13 was unavailable to Xcode during readiness check `3297905`; no GATT or delivery evidence could be collected.
 
 ## Next action
 
-F0 is closed. Keep full integration waiting for accepted C2, C3, and G1 handoffs; subsystem implementation was not started during this closure.
+Poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`, continue independent transport/video/gameplay work, and accept each software handoff only with exact commit, tests/results, and remaining hardware requirements.
