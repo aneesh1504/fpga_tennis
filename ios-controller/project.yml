@@ -1,0 +1,48 @@
+name: MotionTennisController
+options:
+  bundleIdPrefix: com.fpga-tennis
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.0"
+targets:
+  MotionTennisController:
+    type: application
+    platform: iOS
+    sources:
+      - MotionTennisController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fpga-tennis.MotionTennisController
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Motion Tennis
+        INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: Motion Tennis uses Bluetooth to send motion-controller samples to the FPGA board.
+        INFOPLIST_KEY_NSMotionUsageDescription: Motion Tennis uses device motion to turn the iPhone into a tennis controller.
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+  MotionTennisControllerTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - MotionTennisControllerTests
+      - path: ../sim/vectors/motion_protocol_v1.json
+        buildPhase: resources
+    dependencies:
+      - target: MotionTennisController
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.fpga-tennis.MotionTennisControllerTests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  MotionTennisController:
+    build:
+      targets:
+        MotionTennisController: all
+        MotionTennisControllerTests: [test]
+    test:
+      targets:
+        - MotionTennisControllerTests

@@ -1,0 +1,472 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C8E984E8E7096BE4FE34A39 /* MotionTennisControllerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8654DF6512D33233AAFACCFC /* MotionTennisControllerApp.swift */; };
+		166902BCF12A75895A60BA1F /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C341AD3DD5C9F086A5DBF9C3 /* BLEManager.swift */; };
+		3D60BE227CEE240496103091 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735AFB3CBE6A309659A165AD /* ContentView.swift */; };
+		4079B9651E21000EFEAFC0AB /* ControllerSessionMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */; };
+		50D85488C6593A2E275F33AD /* ControllerSessionMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE8185BA7208B24BD349E32 /* ControllerSessionMachine.swift */; };
+		652DF9F983279EE599051DBB /* MotionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7995543F2A4FFB8A4AF0E58 /* MotionPacket.swift */; };
+		B48F0884086AB65C5C8707CE /* MotionSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F281CD8100D76789BD5E58 /* MotionSampler.swift */; };
+		B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */; };
+		B97A80C9F2AE5D4FB9086E76 /* motion_protocol_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */; };
+		C1FD8B9A981083A272B252AE /* MotionPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */; };
+		E3FD7CADBA42237E12C8E528 /* LatestFrameQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */; };
+		F1A301E1EB11E0822512C41E /* ControllerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDADDC9448F5DAC9AD788848 /* ControllerViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6FF55DE702C4DD78C06E4348 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2E751309D0A523902A367A0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AD607EAF72B96B9434FE3157;
+			remoteInfo = MotionTennisController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = motion_protocol_v1.json; sourceTree = "<group>"; };
+		32F281CD8100D76789BD5E58 /* MotionSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSampler.swift; sourceTree = "<group>"; };
+		735AFB3CBE6A309659A165AD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestFrameQueue.swift; sourceTree = "<group>"; };
+		8654DF6512D33233AAFACCFC /* MotionTennisControllerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTennisControllerApp.swift; sourceTree = "<group>"; };
+		8FE8185BA7208B24BD349E32 /* ControllerSessionMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerSessionMachine.swift; sourceTree = "<group>"; };
+		98BB4EB278916BD45BEF9448 /* MotionTennisController.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MotionTennisController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerSessionMachineTests.swift; sourceTree = "<group>"; };
+		AA417DFFB3151BB74965A4E4 /* MotionTennisControllerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MotionTennisControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C341AD3DD5C9F086A5DBF9C3 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
+		CDADDC9448F5DAC9AD788848 /* ControllerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerViewModel.swift; sourceTree = "<group>"; };
+		D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestFrameQueueTests.swift; sourceTree = "<group>"; };
+		F7995543F2A4FFB8A4AF0E58 /* MotionPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionPacket.swift; sourceTree = "<group>"; };
+		F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionPacketTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0531DC798F97C3AE35239DD4 /* MotionTennisController */ = {
+			isa = PBXGroup;
+			children = (
+				C341AD3DD5C9F086A5DBF9C3 /* BLEManager.swift */,
+				735AFB3CBE6A309659A165AD /* ContentView.swift */,
+				8FE8185BA7208B24BD349E32 /* ControllerSessionMachine.swift */,
+				CDADDC9448F5DAC9AD788848 /* ControllerViewModel.swift */,
+				7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */,
+				F7995543F2A4FFB8A4AF0E58 /* MotionPacket.swift */,
+				32F281CD8100D76789BD5E58 /* MotionSampler.swift */,
+				8654DF6512D33233AAFACCFC /* MotionTennisControllerApp.swift */,
+			);
+			path = MotionTennisController;
+			sourceTree = "<group>";
+		};
+		11A017775310D9FB3BB6EA97 /* sim */ = {
+			isa = PBXGroup;
+			children = (
+				689DEEF01D5DD580BCF92FCA /* vectors */,
+			);
+			path = sim;
+			sourceTree = "<group>";
+		};
+		267954483419CFF5B4090781 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				98BB4EB278916BD45BEF9448 /* MotionTennisController.app */,
+				AA417DFFB3151BB74965A4E4 /* MotionTennisControllerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3A9FC0BB7531CF6752F49869 /* fpga_tennis */ = {
+			isa = PBXGroup;
+			children = (
+				11A017775310D9FB3BB6EA97 /* sim */,
+			);
+			name = fpga_tennis;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		689DEEF01D5DD580BCF92FCA /* vectors */ = {
+			isa = PBXGroup;
+			children = (
+				015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */,
+			);
+			path = vectors;
+			sourceTree = "<group>";
+		};
+		C15481AC1782F718D52B81AB /* MotionTennisControllerTests */ = {
+			isa = PBXGroup;
+			children = (
+				A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */,
+				D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */,
+				F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */,
+			);
+			path = MotionTennisControllerTests;
+			sourceTree = "<group>";
+		};
+		C816B2D39BAB04F32E79FC60 = {
+			isa = PBXGroup;
+			children = (
+				3A9FC0BB7531CF6752F49869 /* fpga_tennis */,
+				0531DC798F97C3AE35239DD4 /* MotionTennisController */,
+				C15481AC1782F718D52B81AB /* MotionTennisControllerTests */,
+				267954483419CFF5B4090781 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AD607EAF72B96B9434FE3157 /* MotionTennisController */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 555E1F4DF4B7DCC4A16AF71D /* Build configuration list for PBXNativeTarget "MotionTennisController" */;
+			buildPhases = (
+				E8EC80278D81578FE800C2AF /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MotionTennisController;
+			packageProductDependencies = (
+			);
+			productName = MotionTennisController;
+			productReference = 98BB4EB278916BD45BEF9448 /* MotionTennisController.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C70F4238E63DF7B0C372D08D /* MotionTennisControllerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D93BCDFA9DEC56388E8D10B2 /* Build configuration list for PBXNativeTarget "MotionTennisControllerTests" */;
+			buildPhases = (
+				73C1BCC3D4D219FC1471DACA /* Sources */,
+				B2AF3246DC031A33818DCBC8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				654A98DE4FDB774235EFEAE0 /* PBXTargetDependency */,
+			);
+			name = MotionTennisControllerTests;
+			packageProductDependencies = (
+			);
+			productName = MotionTennisControllerTests;
+			productReference = AA417DFFB3151BB74965A4E4 /* MotionTennisControllerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E2E751309D0A523902A367A0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					AD607EAF72B96B9434FE3157 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 938F280469E8C53FDE74B008 /* Build configuration list for PBXProject "MotionTennisController" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C816B2D39BAB04F32E79FC60;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 267954483419CFF5B4090781 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AD607EAF72B96B9434FE3157 /* MotionTennisController */,
+				C70F4238E63DF7B0C372D08D /* MotionTennisControllerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B2AF3246DC031A33818DCBC8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B97A80C9F2AE5D4FB9086E76 /* motion_protocol_v1.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		73C1BCC3D4D219FC1471DACA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4079B9651E21000EFEAFC0AB /* ControllerSessionMachineTests.swift in Sources */,
+				B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */,
+				C1FD8B9A981083A272B252AE /* MotionPacketTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8EC80278D81578FE800C2AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				166902BCF12A75895A60BA1F /* BLEManager.swift in Sources */,
+				3D60BE227CEE240496103091 /* ContentView.swift in Sources */,
+				50D85488C6593A2E275F33AD /* ControllerSessionMachine.swift in Sources */,
+				F1A301E1EB11E0822512C41E /* ControllerViewModel.swift in Sources */,
+				E3FD7CADBA42237E12C8E528 /* LatestFrameQueue.swift in Sources */,
+				652DF9F983279EE599051DBB /* MotionPacket.swift in Sources */,
+				B48F0884086AB65C5C8707CE /* MotionSampler.swift in Sources */,
+				0C8E984E8E7096BE4FE34A39 /* MotionTennisControllerApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		654A98DE4FDB774235EFEAE0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AD607EAF72B96B9434FE3157 /* MotionTennisController */;
+			targetProxy = 6FF55DE702C4DD78C06E4348 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2D52635EBE90F3290A9EDA9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fpga-tennis.MotionTennisControllerTests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotionTennisController.app/MotionTennisController";
+			};
+			name = Debug;
+		};
+		4632E81F8DE61850817CC422 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Motion Tennis";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Motion Tennis uses Bluetooth to send motion-controller samples to the FPGA board.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Motion Tennis uses device motion to turn the iPhone into a tennis controller.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fpga-tennis.MotionTennisController";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		70C93B1C4DF408B56394F765 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		7A1D4D925CDC3BE6AB01AA76 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B195E1D6BF6E267956C9D3E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fpga-tennis.MotionTennisControllerTests";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MotionTennisController.app/MotionTennisController";
+			};
+			name = Release;
+		};
+		DCEEE5F59377A31A49C65646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Motion Tennis";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Motion Tennis uses Bluetooth to send motion-controller samples to the FPGA board.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Motion Tennis uses device motion to turn the iPhone into a tennis controller.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fpga-tennis.MotionTennisController";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		555E1F4DF4B7DCC4A16AF71D /* Build configuration list for PBXNativeTarget "MotionTennisController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCEEE5F59377A31A49C65646 /* Debug */,
+				4632E81F8DE61850817CC422 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		938F280469E8C53FDE74B008 /* Build configuration list for PBXProject "MotionTennisController" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A1D4D925CDC3BE6AB01AA76 /* Debug */,
+				70C93B1C4DF408B56394F765 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D93BCDFA9DEC56388E8D10B2 /* Build configuration list for PBXNativeTarget "MotionTennisControllerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D52635EBE90F3290A9EDA9A /* Debug */,
+				B195E1D6BF6E267956C9D3E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E2E751309D0A523902A367A0 /* Project object */;
+}
