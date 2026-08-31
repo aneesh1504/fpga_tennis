@@ -63,11 +63,21 @@ module scripted_opponent (
             state_q <= OPPONENT_SAMPLE_0;
           end
         end
-        OPPONENT_SAMPLE_0,
-        OPPONENT_SAMPLE_1,
+        OPPONENT_SAMPLE_0: begin
+          if (sample_valid && sample_ready) begin
+            state_q <= OPPONENT_SAMPLE_1;
+            sequence_q <= sequence_q + 1'b1;
+          end
+        end
+        OPPONENT_SAMPLE_1: begin
+          if (sample_valid && sample_ready) begin
+            state_q <= OPPONENT_SAMPLE_2;
+            sequence_q <= sequence_q + 1'b1;
+          end
+        end
         OPPONENT_SAMPLE_2: begin
           if (sample_valid && sample_ready) begin
-            state_q <= state_q + 1'b1;
+            state_q <= OPPONENT_SAMPLE_3;
             sequence_q <= sequence_q + 1'b1;
           end
         end
