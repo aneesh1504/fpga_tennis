@@ -64,8 +64,8 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 
 | Item | Verified value | Evidence |
 |---|---|---|
-| Vivado and vendor IP versions | Unverified | — |
-| Boolean Board XDC source/version and pins | Unverified | — |
+| Vivado and locally generated IP versions | Unverified | `vivado` not found on `PATH` 2026-08-31 |
+| Boolean Board XDC source and board-fixed pins | Vendor source and clock/BLE/HDMI/audio pins recorded; physical revision compatibility unverified | `docs/hardware-manifest.md` |
 | BLE names, UUIDs, and payload limits | Unverified | — |
 | Board-to-board Pmod positions/wiring | Unverified | — |
 | Monitor mode, clocks, delivery rates, and error measurements | Unverified | — |
@@ -122,6 +122,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 - C1 requires physical iPhone, BLE peripheral, and programmed-board evidence; simulator results do not satisfy it.
 - The shared local Icarus bootstrap is not safe for first-use concurrent test launches; initialize it once or run WSL-backed suites sequentially.
 - `board_a_system` is a simulation-verified structural integration module. It is not a board bitstream top and contains no guessed clock, reset, UART, HDMI, audio, or connector pin assignments.
+- The official constraints source does not select this project's board-to-board Pmod ports; connector choice, header position, pin mapping, orientation, and continuity must be verified before wiring.
 
 ## Next action
 
