@@ -1,14 +1,35 @@
 # Video Track Status
 
-- Owner: Codex video review agent `/root/video_f0_review`
-- State: F0 consumer review accepted; waiting for integrated F0 closure
+- Owner: Codex video implementation owner `/root/video_f0_review`
+- State: Software-simulation handoff ready; C3 hardware/synthesis checkpoint pending
 - Track document: `docs/04_track_video.md`
 - Reviewed base commit: `7dce568348d7b30cda9063822534ab7c3d6ddf2a`
 - Frozen-interface commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
+- Merged implementation baseline: `origin/main` `b419052becfc8d5e615aa4e0dc558ba2a38e417b`, merged by `c8aa3d4135c647f6a88c16db00d5152e086eacf6`
+- Video implementation commits: `86982c7eedefb4e0b280e22734c4cea1545a629d`, `df1f7dc2b9fc2be166ea8ca32cf8be595f3583bb`
 
 ## Implemented
 
-No video subsystem implementation was started. This branch contains only the F0 consumer review record.
+- `video_timing_720p.sv`: parameterized one-pixel-per-clock raster timing. The software baseline uses nominal 1280 active pixels, 110 front porch, 40 positive sync, 220 back porch, 720 active lines, 5 front porch, 5 positive sync, and 20 back porch, totaling 1650 by 750. Vendor-reference confirmation remains pending.
+- `perspective_projector.sv`: signed Q8.8 logical-court projection with fixed horizon, depth narrowing, height lift, and saturated signed screen outputs.
+- `court_renderer.sv` and `net_renderer.sv`: framebuffer-free stadium/crowd, green surround, blue trapezoidal court, perspective lines, center/service/baseline markings, net mesh/band/posts, and foreground/background net separation.
+- `sprite_renderer.sv`, `font_rom.sv`, and `ui_renderer.sv`: synchronous palette-indexed ROM reads, transparent sprites, clipping, integer scaling, four player poses, 8-by-8 text, score, connection indicators, and two swing-strength meters.
+- `pixel_compositor.sv`: deterministic frozen priority order from background through court/net/players/ball to UI.
+- `video_pipeline.sv`: complete procedural scene with ball/shadow, near/far players, UI, aligned RGB/sync/VDE/coordinates, and two registered raster-to-output stages. It issues one vblank request at a time and clears pending only on the mailbox's pixel-domain atomic-capture pulse.
+- `scripts/build_assets.py`: deterministic generator/checker for four checked-in memory files. The logical asset payload is 2400 sprite bytes, 768 font bytes, and 48 RGB palette bytes (3216 bytes total), well below the provisional 160 KB budget; synthesis must establish actual BRAM inference.
+- Self-checking timing, component, atomic snapshot, and complete-frame regressions under `sim/video/`, with repeatable PowerShell and POSIX shell entry points.
+
+No HDMI serializer, vendor IP wrapper, clock primitive, XDC, Board A top-level integration, or hardware-specific value was implemented or guessed.
+
+## Software handoff contract
+
+`video_pipeline` consumes the frozen `game_render_state_t` after the gameplay/video mailbox has atomically captured it into the pixel domain:
+
+- Inputs: `clk_pix`, active-low `rst_pix_n`, `render_state_pix`, and the one-cycle pixel-domain `pixel_state_valid` completion pulse.
+- Snapshot outputs: `vblank_request_toggle` and diagnostic `snapshot_pending`.
+- Raster outputs: aligned `pixel_x[11:0]`, `pixel_y[10:0]`, `hsync`, `vsync`, `video_data_enable`, `start_of_line`, `start_of_frame`, and RGB888 `red`, `green`, `blue`.
+- Pipeline contract: layer/ROM sampling followed by registered composition; coordinates, sync, VDE, and frame/line flags are delayed through the same two register stages as RGB.
+- Reset contract: asynchronous assertion is supported; integration must synchronously deassert reset in `clk_pix` as required by the frozen contract.
 
 ## F0 consumer review
 
@@ -34,19 +55,33 @@ No versioned change request is required.
 
 ## Tests and evidence
 
-- `& .\scripts\run_smoke.ps1` -- PASS on 2026-08-30 (America/New_York): 6 protocol vectors validated; local links validated in 21 Markdown files; shared packages compiled/elaborated with Icarus Verilog 12.0; transport-to-gameplay, gameplay-to-video atomic snapshot, gameplay-to-audio, and subsystem-to-top smoke tests all passed.
-- `git diff --check` -- PASS with exit code 0; Git emitted only the working-tree line-ending notice that LF will be converted to CRLF when it next touches `status/video.md`, with no whitespace-error diagnostics.
-- Gameplay-to-video test evidence: `sim/interfaces/tb_interface_smoke.sv` published a valid synthetic state containing `ball_x_q8_8 = 16'sh1234`, issued a pixel-domain request toggle, observed `pixel_state_valid`, and verified the captured valid bit and coordinate.
+Commands were run from the repository root on 2026-08-31 (America/New_York), after merging `origin/main` `b419052becfc8d5e615aa4e0dc558ba2a38e417b`:
+
+- `python scripts/build_assets.py` -- PASS: generated 4 deterministic video memories with 3184 addressable entries.
+- `python scripts/build_assets.py --check` -- PASS: all 4 checked-in memories exactly matched regenerated content.
+- `& .\sim\video\run_video_tests.ps1` -- PASS using Icarus Verilog 12.0:
+  - nominal 720p frame length `1,237,500`, active count `921,600`, positive sync widths, VDE region, coordinate bounds, and vertical blank passed;
+  - projection depth/height and symmetry, court predicates/symmetry, net layers, font row and score glyph selection, sprite ROM addressing/transparency/edge clipping, and every compositor priority passed;
+  - a state change after the system-domain snapshot but before pixel capture produced exactly the complete old snapshot followed by the complete new snapshot, then reset cleanly;
+  - the complete frame contained `329,135` court pixels, `348,987` surround pixels, `204,308` crowd pixels, `19,685` line/UI pixels, `81` ball pixels, and `300` player-shirt pixels; both swing-meter widths were exact; RGB was black throughout blanking; one request was issued and acknowledged;
+  - all video elaboration and behavioral regressions passed.
+- `& .\scripts\run_smoke.ps1` -- PASS: 6 normative protocol vectors, local links in 23 Markdown files, shared-package compile/elaboration, and all 4 cross-track interface smoke tests passed.
+- `node scripts/check_markdown_links.mjs` -- PASS after this status update: local links validated in 23 Markdown files.
+- `git diff --check` -- PASS with exit code 0 after this status update; Git emitted only the working-tree LF-to-CRLF conversion notice for `status/video.md`, with no whitespace-error diagnostics.
+
+Icarus emitted its non-fatal conservative sensitivity diagnostic (`constant selects in always_* processes ... all bits will be included`) for several combinational blocks. It did not affect elaboration or simulation results; Vivado lint/synthesis remains required to establish production-tool behavior.
 
 ## Interface requests
 
-None. Video accepts the frozen contracts listed above without changes. Future changes require a new interface revision and affected-owner acknowledgement.
+None. Video consumes package revision `0x0100`, the gameplay-to-video seam `1.0`, and the atomic snapshot contract without a frozen-interface change. The pixel pipeline connects to the existing mailbox's `render_state_pix` and `pixel_state_valid` outputs.
 
 ## Risks/blockers
 
-- F0 remains open until the integration owner merges all four consumer acknowledgements and the complete suite passes on the merged result.
-- BLE UUIDs, board pins, IP versions, timing/resource results, monitor mode, and physical measurements remain explicitly unverified and are not part of this interface acceptance.
+- C3 is not passed. No Vivado synthesis, implementation, timing analysis, bitstream, physical Board A output, monitor identification, or five-minute stability run has occurred.
+- The exact Real Digital VGA-to-HDMI reference/IP version and interface, supported Vivado version, 74.25 MHz/high-speed clock configuration, sync/polarity expectations, XDC source/pins, and monitor mode remain unverified.
+- BRAM/LUT/FF/DSP utilization, inferred ROM implementation, worst setup slack, critical warnings, and physical image quality remain unmeasured.
+- Nominal software timing parameters must be checked against the selected vendor-supported HDMI path before top-level integration. Any mismatch is an integration/configuration issue unless it changes the frozen gameplay/video contract.
 
 ## Next action
 
-Wait for integrated F0 closure. After F0 passes, drive the frozen render state with a synthetic scene and establish timing-generator tests.
+The orchestration owner may accept this branch as a software-simulation video handoff. To claim C3, integration/hardware work must select and document the vendor HDMI path and Vivado version, generate verified clocks, connect authoritative XDC constraints, run synthesis/implementation with non-negative worst setup slack and no unresolved critical warnings, record utilization, program Board A, verify the monitor reports 1280 by 720 at 60 Hz, visually inspect every scene layer and priority, and complete the required five-minute stability run.
