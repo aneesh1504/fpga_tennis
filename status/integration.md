@@ -68,7 +68,7 @@ No hardware was used, programmed, wired, or measured.
 
 | Request | Target | Requested action | Relevant commit/interface | Gate impact | State |
 |---|---|---|---|---|---|
-| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | On a physical iPhone and programmed Boolean Board, record the advertised name, service UUID, writable characteristic UUID/properties, notify UUID/properties if present, maximum write-without-response length, device/iOS/app build, and observed discovery/connection result. Then coordinate a one-byte UART check and 50 Hz protocol-v1 stream once transport supplies the hardware build. Respond only in `status/ios.md`; do not infer absent values. | iOS `3aaf1fb`; protocol `1.0` / wire `0x01`; transport build pending | Blocks C1; does not block C2 simulation, C3, or G1 | Open |
+| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | On a physical iPhone and programmed Boolean Board, record the advertised name, service UUID, writable characteristic UUID/properties, notify UUID/properties if present, maximum write-without-response length, device/iOS/app build, and observed discovery/connection result. Then coordinate a one-byte UART check and 50 Hz protocol-v1 stream once transport supplies the hardware build. Respond only in `status/ios.md`; do not infer absent values. | iOS `3aaf1fb`; protocol `1.0` / wire `0x01`; response `44d0f79`; transport build pending | Blocks C1; does not block C2 simulation, C3, or G1 | Acknowledged; waiting for connected/unlocked/trusted iPhone and programmed transport build |
 
 Any future contract change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
 
@@ -77,6 +77,7 @@ Any future contract change must use the versioned frozen-contract process; do no
 - Exact BLE UUIDs, writable/notify characteristics, payload limits, XDC source/pins, Pmod positions, Vivado/IP versions, board revisions, monitor mode, and all measurements are unverified.
 - Full integration remains blocked on accepted C2, C3, and G1 handoffs.
 - `IOS-REQ-001` requires physical hardware and remains open; iOS simulator evidence is accepted only as a software handoff.
+- The registered iPhone 13 was unavailable to Xcode during readiness check `3297905`; no GATT or delivery evidence could be collected.
 
 ## Next action
 
