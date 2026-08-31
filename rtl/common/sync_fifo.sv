@@ -37,6 +37,13 @@ module sync_fifo #(
   assign write_fire = in_valid && in_ready;
   assign read_fire  = out_valid && out_ready;
 
+  // Keep storage outside the asynchronous-reset process. FIFO validity is
+  // determined by level/pointers, so clearing every memory bit is unnecessary
+  // and prevents Vivado from inferring RAM resources.
+  always_ff @(posedge clk) begin
+    if (write_fire) memory[write_ptr_q] <= in_data;
+  end
+
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       write_ptr_q <= '0;
@@ -49,10 +56,7 @@ module sync_fifo #(
       overflow  <= in_valid && !in_ready;
       underflow <= out_ready && !out_valid;
 
-      if (write_fire) begin
-        memory[write_ptr_q] <= in_data;
-        write_ptr_q <= write_ptr_q + 1'b1;
-      end
+      if (write_fire) write_ptr_q <= write_ptr_q + 1'b1;
       if (read_fire) begin
         read_ptr_q <= read_ptr_q + 1'b1;
       end
