@@ -39,3 +39,27 @@ compile_and_run tb_motion_transport_rx \
   rtl/common/motion_packet_decoder.sv \
   rtl/common/motion_transport_rx.sv \
   sim/common/tb_motion_transport_rx.sv
+
+compile_and_run tb_dual_motion_transport_rx \
+  rtl/packages/protocol_pkg.sv \
+  rtl/common/tick_gen.sv \
+  rtl/common/uart_rx.sv \
+  rtl/common/crc16_ccitt.sv \
+  rtl/common/frame_unescaper.sv \
+  rtl/common/motion_packet_decoder.sv \
+  rtl/common/motion_transport_rx.sv \
+  rtl/common/dual_motion_transport_rx.sv \
+  sim/common/tb_dual_motion_transport_rx.sv
+
+compile_and_run tb_frame_forwarder \
+  rtl/common/sync_fifo.sv \
+  rtl/bridge/frame_forwarder.sv \
+  sim/common/tb_frame_forwarder.sv
+
+compile_and_run tb_board_b_top \
+  rtl/common/uart_rx.sv \
+  rtl/common/uart_tx.sv \
+  rtl/common/sync_fifo.sv \
+  rtl/bridge/frame_forwarder.sv \
+  rtl/bridge/board_b_top.sv \
+  sim/common/tb_board_b_top.sv
