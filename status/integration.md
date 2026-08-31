@@ -9,7 +9,7 @@
 
 | Track/gate | Commit | Evidence reviewed | Accepted |
 |---|---|---|---|
-| F0 interface freeze | This commit; exact SHA in push receipt | Packages/vectors/stubs/tests reviewed by integration owner; four track-owner acknowledgements pending | No |
+| F0 interface freeze | Freeze commit `8255a4c`; iOS review `9e62763` | Packages/vectors/stubs/tests reviewed by integration and iOS owners; three track-owner acknowledgements pending | No |
 | iOS/C1 | — | — | No |
 | Transport/C2 | — | — | No |
 | Video/C3 | — | — | No |
@@ -32,7 +32,7 @@
 | Owner | Paths |
 |---|---|
 | `interface-freeze-owner` (Codex current task through F0) | `rtl/packages/`, `docs/protocol.md`, initial `sim/vectors/`, F0-only `sim/interfaces/`, repository skeleton |
-| `ios-track-owner` | `ios-controller/`, iOS tests, `status/ios.md` |
+| `ios-track-owner` (Codex macOS task) | `ios-controller/`, iOS tests, `status/ios.md` |
 | `transport-track-owner` | `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport build files, `status/transport.md` |
 | `video-track-owner` | `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, `status/video.md` |
 | `gameplay-track-owner` | `rtl/game/`, `rtl/audio/`, `sim/game/`, `status/gameplay.md` |
@@ -44,7 +44,7 @@
 |---|---|
 | Interface-freeze owner | Complete 2026-08-30 |
 | Integration/top-level owner | Complete 2026-08-30; structural seam passes |
-| iOS owner | Pending; no acknowledgement supplied |
+| iOS owner | Complete at `9e62763`; Swift 6.2.1 independently validated all six vectors |
 | Transport owner | Pending; no acknowledgement supplied |
 | Video owner | Pending; no acknowledgement supplied |
 | Gameplay/audio owner | Pending; no acknowledgement supplied |
@@ -62,15 +62,15 @@ No hardware was used, programmed, wired, or measured.
 
 ## Open cross-track requests
 
-- Each of `ios-track-owner`, `transport-track-owner`, `video-track-owner`, and `gameplay-track-owner` must review and acknowledge protocol `1.0`, package interfaces `0x0100`, its consumed seam, and the relevant golden vectors.
+- Each of `transport-track-owner`, `video-track-owner`, and `gameplay-track-owner` must review and acknowledge protocol `1.0`, package interfaces `0x0100`, its consumed seam, and the relevant golden vectors.
 - Any requested change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
 
 ## Risks/blockers
 
-- F0 cannot pass until the four required track-owner reviews are recorded.
+- F0 cannot pass until the three remaining required track-owner reviews are recorded.
 - Exact BLE UUIDs, writable/notify characteristics, payload limits, XDC source/pins, Pmod positions, Vivado/IP versions, board revisions, monitor mode, and all measurements are unverified.
 - Full integration remains blocked on accepted C2, C3, and G1 handoffs even after F0 review closes.
 
 ## Next action
 
-Obtain and record all four F0 consumer acknowledgements. Keep every implementation track waiting until orchestration records a passed F0 in a subsequent commit.
+Obtain and record the transport, video, and gameplay/audio F0 consumer acknowledgements. Keep every implementation track waiting until orchestration records a passed F0 in a subsequent commit.
