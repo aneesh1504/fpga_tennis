@@ -5,33 +5,34 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 ## Current state
 
 - Execution mode: Interface freeze, then four parallel tracks
-- Current gate: F0 — artifacts and executable checks complete; required consumer reviews pending
-- Last completed gate/checkpoint: None
-- Overall status: F0 is **not passed** because transport, video, and gameplay/audio owner acknowledgements are not recorded
+- Current gate: F0 — **passed**
+- Last completed gate/checkpoint: F0 interface freeze
+- Overall status: Frozen contracts accepted by all four consumer owners; implementation tracks are ready but not started
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
-- Freeze implementation commit: This commit; its exact SHA is available only after commit creation and is recorded in the push receipt/final handoff
+- Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
+- Reviewed merge before closure: `2083519`; closure commit is this commit and its exact SHA is recorded in the push receipt/final handoff
 
 ## Dependency board
 
 | Work | State | Depends on | Detailed status |
 |---|---|---|---|
-| Interface freeze | Review pending | Transport, video, and gameplay/audio owner acknowledgements | This file and `docs/00_interface_freeze.md` |
-| iOS controller | Waiting | F0 | `status/ios.md` |
-| Transport RTL | Waiting | F0 | `status/transport.md` |
-| Video | Waiting | F0 | `status/video.md` |
-| Gameplay | Waiting | F0 | `status/gameplay.md` |
+| Interface freeze | Passed | All deliverables, reviews, and merged smoke tests passed | This file and `docs/00_interface_freeze.md` |
+| iOS controller | Ready | F0 passed | `status/ios.md` |
+| Transport RTL | Ready | F0 passed | `status/transport.md` |
+| Video | Ready | F0 passed | `status/video.md` |
+| Gameplay | Ready | F0 passed | `status/gameplay.md` |
 | Integration | Waiting | C2 + C3 + G1 | `status/integration.md` |
 
 ## Frozen interface record
 
 | Item | Version | State |
 |---|---|---|
-| Motion wire protocol | Wire `0x01`; document/API `1.0` | Candidate frozen; tests pass, reviews pending |
-| SystemVerilog shared packages | `protocol/game/video` interface `0x0100` | Compile/elaboration pass; reviews pending |
-| Golden protocol vectors | Format `1`, protocol `1`, six vectors | Validator pass; reviews pending |
-| Cross-track module interfaces/stubs | Interface `1.0` | Four smoke checks pass; reviews pending |
-| File owners | Ownership table below | Exclusive roles assigned; iOS staffed/reviewed, three consumer roles pending |
+| Motion wire protocol | Wire `0x01`; document/API `1.0` | Frozen and accepted by all consumers |
+| SystemVerilog shared packages | `protocol/game/video` interface `0x0100` | Frozen; merged compile/elaboration passed |
+| Golden protocol vectors | Format `1`, protocol `1`, six vectors | Frozen; independent Swift and merged validator checks passed |
+| Cross-track module interfaces/stubs | Interface `1.0` | Frozen; all four merged smoke checks passed |
+| File owners | Ownership table below | Exclusive roles assigned and all F0 consumer reviews recorded |
 
 ## Exclusive ownership assignments
 
@@ -39,12 +40,12 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 |---|---|
 | `interface-freeze-owner` (Codex current task through F0) | `rtl/packages/`, `docs/protocol.md`, initial `sim/vectors/`, F0-only `sim/interfaces/`, repository skeleton |
 | `ios-track-owner` (Codex macOS task) | `ios-controller/`, iOS-side tests, `status/ios.md` |
-| `transport-track-owner` | `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport build files, `status/transport.md` |
-| `video-track-owner` | `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, `status/video.md` |
-| `gameplay-track-owner` | `rtl/game/`, `rtl/audio/`, `sim/game/`, `status/gameplay.md` |
+| `transport-track-owner` (`/root/transport_f0_review`) | `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport build files, `status/transport.md` |
+| `video-track-owner` (`/root/video_f0_review`) | `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, `status/video.md` |
+| `gameplay-track-owner` (`/root/gameplay_f0_review`) | `rtl/game/`, `rtl/audio/`, `sim/game/`, `status/gameplay.md` |
 | `orchestration-integration-owner` (Codex current task) | `rtl/board_a_top.sv`, board/project build scripts, `config/`, `docs/hardware-manifest.md`, `docs/bringup-log.md`, `STATUS.md`, `status/integration.md` |
 
-Role assignment is exclusive. A future agent or person must explicitly assume one unstaffed track-owner identifier before editing its paths.
+Role assignment is exclusive. Future implementation work must preserve these ownership boundaries.
 
 ## F0 review acknowledgements
 
@@ -53,9 +54,9 @@ Role assignment is exclusive. A future agent or person must explicitly assume on
 | Interface freeze | Codex current task | Complete | Protocol, types, vectors, stubs, ownership, and tests checked 2026-08-30 |
 | Integration/top level | Codex current task | Complete | Structural top seam compiled and simulated 2026-08-30 |
 | Swift/iOS encoder | `ios-track-owner` (Codex macOS task) | Complete | Commit `9e62763`; independent Swift 6.2.1 vector interpretation passed |
-| Transport RTL | `transport-track-owner` | Pending | No owner acknowledgement supplied |
-| Video RTL | `video-track-owner` | Pending | No owner acknowledgement supplied |
-| Gameplay/audio RTL | `gameplay-track-owner` | Pending | No owner acknowledgement supplied |
+| Transport RTL | `/root/transport_f0_review` | Complete | Commit `7d10743`; accepted protocol `1.0`, package `0x0100`, vectors, and seam `1.0` without changes |
+| Video RTL | `/root/video_f0_review` | Complete | Commit `0c6f9cd`; accepted video package `0x0100`, seam `1.0`, and snapshot contract without changes |
+| Gameplay/audio RTL | `/root/gameplay_f0_review` | Complete | Commit `f27b234`; accepted protocol `1.0`, all packages `0x0100`, and seams `1.0` without changes |
 
 ## Hardware discoveries
 
@@ -73,7 +74,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
-| F0 interface freeze | **Not passed — review pending** | All files and executable checks pass; three required track-owner reviews absent |
+| F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
 | C1 BLE sensor path | Not started | — |
 | C2 two-board path | Not started | — |
 | C3 video path | Not started | — |
@@ -84,18 +85,19 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 
 | Exact command | Result |
 |---|---|
-| `git fetch origin main` | Pass; `origin/main` fetched at `b8f0578` |
-| `git merge-base --is-ancestor b8f0578 origin/main` | Pass; exit 0 |
-| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` | Pass; 6 vectors, 21 Markdown files, package elaboration, and all 4 interface seams passed using Icarus Verilog 12.0 |
-| `git diff --check` | Pass; no whitespace errors |
+| `git merge --no-edit origin/work/ios` | Pass; review commit `9e62763` already present |
+| `git merge --no-edit origin/work/transport` | Pass; review commit `7d10743` merged |
+| `git merge --no-edit origin/work/video` | Pass; review commit `0c6f9cd` merged |
+| `git merge --no-edit origin/work/gameplay` | Pass; review commit `f27b234` merged |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` | Pass on merged `2083519`; 6 vectors, 21 Markdown files, package elaboration, and all 4 interface seams passed using Icarus Verilog 12.0 |
+| `git diff --check` and `git diff origin/main..HEAD --check` | Pass; no whitespace errors |
 
 ## Open issues and risks
 
-- Required transport, video, and gameplay/audio owner reviews are absent, so F0 remains closed and implementation tracks must not start.
 - The wire field is named `sequence_number` in SystemVerilog because `sequence` is a reserved keyword; consumers must use the frozen name.
 - No hardware was used. UUIDs, pins, board revisions, IP/tool versions, connector orientation, timing, delivery rates, and measurements remain unverified.
-- A commit cannot contain its own resulting SHA without changing that SHA. The exact pushed SHA is therefore recorded in the external push receipt/final handoff; the repository record identifies it as the commit containing this status and the requested subject.
+- Frozen-contract changes now require a versioned proposal, updated vectors/tests, and every affected-owner acknowledgement.
 
 ## Next action
 
-Staff the transport, video, and gameplay/audio owner roles and record their reviews of protocol `1.0` and interface revision `0x0100`. If all acknowledge without changes, update F0 to passed in a later orchestration commit; otherwise use the versioned contract-change process. Do not dispatch implementation before that review commit.
+F0 is closed. Dispatch iOS, transport, video, and gameplay implementation only as separate owned work; no subsystem implementation was begun during review or closure.
