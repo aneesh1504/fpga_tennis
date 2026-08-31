@@ -53,6 +53,21 @@ final class ControllerSessionMachineTests: XCTestCase {
         XCTAssertFalse(machine.streaming)
     }
 
+    func testReconnectRequiresRediscoveryThenCanResume() {
+        var machine = readyMachine()
+        machine.apply(.streamingStarted)
+        machine.apply(.reconnecting)
+        XCTAssertEqual(machine.phase, .reconnecting)
+        XCTAssertFalse(machine.streaming)
+        XCTAssertFalse(machine.writeChannelSelected)
+
+        machine.apply(.connected)
+        machine.apply(.writeChannelSelected)
+        XCTAssertEqual(machine.phase, .ready)
+        machine.apply(.streamingStarted)
+        XCTAssertTrue(machine.streaming)
+    }
+
     private func readyMachine() -> ControllerSessionMachine {
         var machine = ControllerSessionMachine()
         machine.apply(.connected)

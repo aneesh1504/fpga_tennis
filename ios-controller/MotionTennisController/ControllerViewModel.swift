@@ -118,6 +118,7 @@ final class ControllerViewModel: ObservableObject {
         switch state {
         case .scanning: apply(.scanStarted)
         case .connecting, .discovering: apply(.connected)
+        case .reconnecting: apply(.reconnecting)
         case .ready: apply(.writeChannelSelected)
         case .disconnected(let message):
             apply(.disconnected)

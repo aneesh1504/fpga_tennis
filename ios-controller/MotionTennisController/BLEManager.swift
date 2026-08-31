@@ -41,6 +41,7 @@ enum BLEConnectionState: Equatable {
     case idle
     case scanning
     case connecting
+    case reconnecting
     case discovering
     case ready
     case disconnected(String?)
@@ -65,6 +66,8 @@ final class BLEManager: NSObject, ObservableObject {
     private var selectedWriteType: CBCharacteristicWriteType = .withoutResponse
     private var waitingForWriteResponse = false
     private var frameQueue = LatestFrameQueue()
+    private var lastPeripheralID: UUID?
+    private var userInitiatedDisconnect = false
 
     init(configuration: BLEConfiguration = .discovery) {
         self.configuration = configuration
@@ -96,12 +99,15 @@ final class BLEManager: NSObject, ObservableObject {
             return
         }
         central.stopScan()
+        lastPeripheralID = id
+        userInitiatedDisconnect = false
         state = .connecting
         central.connect(peripheral)
     }
 
     func disconnect() {
         guard let connectedPeripheral else { return }
+        userInitiatedDisconnect = true
         central.cancelPeripheralConnection(connectedPeripheral)
     }
 
@@ -155,7 +161,7 @@ final class BLEManager: NSObject, ObservableObject {
         isBackpressured = frameQueue.isBackpressured
     }
 
-    private func resetConnection(message: String?) {
+    private func resetConnection(message: String?, allowReconnect: Bool) {
         connectedPeripheral = nil
         characteristics.removeAll()
         writableCharacteristics.removeAll()
@@ -165,6 +171,22 @@ final class BLEManager: NSObject, ObservableObject {
         frameQueue.removeAll()
         updateQueueMetrics()
         state = .disconnected(message)
+        if allowReconnect { scheduleReconnect() }
+    }
+
+    private func scheduleReconnect() {
+        guard central.state == .poweredOn,
+              !userInitiatedDisconnect,
+              let lastPeripheralID else { return }
+        state = .reconnecting
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self, self.state == .reconnecting else { return }
+            guard let peripheral = self.central.retrievePeripherals(withIdentifiers: [lastPeripheralID]).first else {
+                self.state = .disconnected("Previously connected peripheral is unavailable.")
+                return
+            }
+            self.central.connect(peripheral)
+        }
     }
 }
 
@@ -208,18 +230,18 @@ extension BLEManager: CBCentralManagerDelegate {
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        resetConnection(message: error?.localizedDescription ?? "Connection failed.")
+        resetConnection(message: error?.localizedDescription ?? "Connection failed.", allowReconnect: true)
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        resetConnection(message: error?.localizedDescription)
+        resetConnection(message: error?.localizedDescription, allowReconnect: !userInitiatedDisconnect)
     }
 }
 
 extension BLEManager: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let error {
-            resetConnection(message: error.localizedDescription)
+            resetConnection(message: error.localizedDescription, allowReconnect: true)
             return
         }
         for service in peripheral.services ?? [] {
@@ -236,7 +258,7 @@ extension BLEManager: CBPeripheralDelegate {
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let error {
-            resetConnection(message: error.localizedDescription)
+            resetConnection(message: error.localizedDescription, allowReconnect: true)
             return
         }
 

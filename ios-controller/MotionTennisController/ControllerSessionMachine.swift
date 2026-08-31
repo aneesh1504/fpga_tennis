@@ -4,6 +4,7 @@ enum ControllerSessionPhase: Equatable {
     case disconnected
     case scanning
     case connected
+    case reconnecting
     case ready
     case calibrating
     case streaming
@@ -15,6 +16,7 @@ enum ControllerSessionPhase: Equatable {
         case .disconnected: return "Disconnected"
         case .scanning: return "Scanning"
         case .connected: return "Connected — select write channel"
+        case .reconnecting: return "Reconnecting"
         case .ready: return "Ready"
         case .calibrating: return "Calibrating"
         case .streaming: return "Streaming"
@@ -27,6 +29,7 @@ enum ControllerSessionPhase: Equatable {
 enum ControllerSessionEvent: Equatable {
     case scanStarted
     case connected
+    case reconnecting
     case writeChannelSelected
     case disconnected
     case calibrationStarted
@@ -52,6 +55,10 @@ struct ControllerSessionMachine {
             streaming = false
             writeChannelSelected = false
             phase = .connected
+        case .reconnecting:
+            streaming = false
+            writeChannelSelected = false
+            phase = .reconnecting
         case .writeChannelSelected:
             writeChannelSelected = true
             phase = calibrated ? .ready : .connected
