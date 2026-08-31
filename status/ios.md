@@ -24,6 +24,7 @@
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'generic/platform=iOS Simulator' build-for-testing CODE_SIGNING_ALLOWED=NO` — pass.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test CODE_SIGNING_ALLOWED=NO -quiet` — pass on iOS Simulator 26.4.1: 13 tests, 0 failures, 0 skipped.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun devicectl list devices` and `xcodebuild ... -showdestinations` — registered iPhone 13 detected as unavailable; no physical iOS destination was available for building or testing.
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun xctrace list devices` plus `system_profiler SPUSBDataType` — registered iPhone 13 running iOS 26.0.1 is offline, and no iPhone is present on USB. `xcodebuild -checkFirstLaunchStatus` passes, so Xcode first-launch setup is complete.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -sdk iphoneos -destination 'generic/platform=iOS' build CODE_SIGNING_ALLOWED=NO -quiet` — pass after synchronizing the complete accepted software stack at `9176fba`; device-SDK/arm64 compilation succeeds without signing.
 - Simulator regression after synchronizing `9176fba` — pass on iOS Simulator 26.4.1: 13 tests, 0 failures, 0 skipped.
 
@@ -51,7 +52,7 @@ None. The iOS owner accepts protocol document/API `1.0`, wire version `0x01`, sh
 - The active developer directory is Command Line Tools rather than full Xcode; builds can use the verified `DEVELOPER_DIR` override without changing global machine state.
 - BLE names, UUIDs, characteristic properties, maximum write length, and physical-device behavior remain unverified.
 - Core Motion availability, signing, BLE discovery/streaming, reconnect behavior, and 50 Hz delivery still require a physical iPhone and programmed Boolean Board.
-- The registered iPhone 13 was unavailable to Xcode during the 2026-08-31 readiness check; connect/unlock/trust it before the device build can proceed.
+- The registered iPhone 13 running iOS 26.0.1 was offline and absent from USB during the 2026-08-31 readiness check; connect/unlock/trust it before signing, installation, or device tests can proceed.
 
 ## Next action
 
