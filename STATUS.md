@@ -7,7 +7,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 - Execution mode: Four parallel implementation tracks after F0
 - Current gate: C1/C2/C3/G1 development in parallel
 - Last completed gate/checkpoint: F0 interface freeze
-- Overall status: All four software handoffs accepted and merged; integration scaffolding is next; C1/C2/C3/G1 hardware/recorded-motion evidence remains open
+- Overall status: All four software handoffs accepted and merged; Board A structural integration passes simulation; C1/C2/C3/G1 hardware/recorded-motion evidence remains open
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
 - Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
@@ -22,7 +22,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 | Transport RTL | Software complete; hardware pending | C1/C2 physical evidence and Vivado implementation | `status/transport.md` |
 | Video | Software complete; hardware pending | C3 Vivado/HDMI/monitor evidence | `status/video.md` |
 | Gameplay | Software complete; validation pending | Recorded phone traces and one-phone FPGA rally for G1 | `status/gameplay.md` |
-| Integration | Scaffolding ready | Formal C2 + C3 + G1 still gate full integration claims | `status/integration.md` |
+| Integration | Structural simulation passed | Formal C2 + C3 + G1 still gate full integration claims | `status/integration.md` |
 
 ## Frozen interface record
 
@@ -79,7 +79,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |
-| C4 integrated game | Not started | — |
+| C4 integrated game | Structural software path passed; gate not passed | Serial transport-to-gameplay-to-video/audio simulation passed; hardware integration depends on C1/C2/C3/G1 evidence |
 
 ## F0 commands and results — 2026-08-30
 
@@ -103,13 +103,26 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` after gameplay merge | Pass; 10/10 swing, shot, physics, rally, scoring, deterministic engine, scripted opponent, mailbox, and audio simulations passed |
 | Transport, video, gameplay, and root smoke regressions after gameplay merge | Pass together on merged `0d3df40`; no cross-track regression detected |
 
+## Structural integration commands and results — 2026-08-31
+
+| Exact command | Result |
+|---|---|
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1` | Pass; serial protocol-v1 frames traversed UART transport and gameplay, then produced an atomic pixel-domain render snapshot, a non-black active video pixel, and audio activity |
+| Concurrent launch of transport, video, gameplay, and root smoke commands | Transport and root smoke runners failed while both attempted to bootstrap the same local Icarus extraction; video and gameplay passed. This was a runner-resource race, not an HDL assertion or compilation failure |
+| `wsl -e sh sim/common/run_transport_wsl.sh` (sequential rerun) | Pass; primitives, vectors/rejections, endpoint health/backpressure, dual receive chains, forwarding, and Board B full-duplex passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/video/run_video_tests.ps1` | Pass; deterministic memories, timing, components, snapshots, and full 1280x720 scene passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` | Pass; 10/10 self-checking gameplay/audio simulations passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass; 6 vectors, local links in 23 Markdown files, shared packages, and all four frozen seams passed |
+
 ## Open issues and risks
 
 - The wire field is named `sequence_number` in SystemVerilog because `sequence` is a reserved keyword; consumers must use the frozen name.
 - No hardware was used. UUIDs, pins, board revisions, IP/tool versions, connector orientation, timing, delivery rates, and measurements remain unverified.
 - Frozen-contract changes now require a versioned proposal, updated vectors/tests, and every affected-owner acknowledgement.
 - C1 requires physical iPhone, BLE peripheral, and programmed-board evidence; simulator results do not satisfy it.
+- The shared local Icarus bootstrap is not safe for first-use concurrent test launches; initialize it once or run WSL-backed suites sequentially.
+- `board_a_system` is a simulation-verified structural integration module. It is not a board bitstream top and contains no guessed clock, reset, UART, HDMI, audio, or connector pin assignments.
 
 ## Next action
 
-Build structural Board A integration and reproducible simulation around transport `1b72824`, video `48890d9`, and gameplay `5cfb1df` without guessing hardware values. Keep C1/C2/C3/G1 open until their physical/recorded evidence is collected.
+Obtain the verified Boolean Board constraint source, clock/reset topology, UART/Pmod wiring, HDMI/audio integration requirements, and installed Vivado/IP versions before creating a bitstream project. Keep C1/C2/C3/G1 and C4 open until their required physical/recorded evidence is collected.

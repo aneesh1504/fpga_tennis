@@ -1,9 +1,9 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: All software handoffs accepted and merged; structural integration may proceed; formal C2/C3/G1 still block full integration claims
+- State: All software handoffs accepted and merged; Board A structural integration passes simulation; formal C2/C3/G1 and physical integration evidence still block C4
 - Track document: `docs/06_integration.md`
-- Integration commit: This F0 commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
+- Structural integration commit: This commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
 ## Accepted handoffs
 
@@ -36,7 +36,7 @@
 | `transport-track-owner` (`/root/transport_f0_review`) | `rtl/common/`, `rtl/bridge/`, `sim/common/`, transport build files, `status/transport.md` |
 | `video-track-owner` (`/root/video_f0_review`) | `rtl/video/`, `assets/`, `scripts/build_assets.py`, `sim/video/`, `status/video.md` |
 | `gameplay-track-owner` (`/root/gameplay_f0_review`) | `rtl/game/`, `rtl/audio/`, `sim/game/`, `status/gameplay.md` |
-| `orchestration-integration-owner` (Codex current task) | `rtl/board_a_top.sv`, board/project build scripts, `config/`, hardware/bring-up docs, `STATUS.md`, this file |
+| `orchestration-integration-owner` (Codex current task) | `rtl/board_a_top.sv`, `rtl/board_a_system.sv`, `sim/integration/`, board/project build scripts, `config/`, hardware/bring-up docs, `STATUS.md`, this file |
 
 ## Review record
 
@@ -70,6 +70,12 @@
 | `git merge --no-edit origin/work/gameplay` | Pass; software handoff `5cfb1df` merged without ownership conflicts |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` after gameplay handoff | Pass with Icarus 12.0: all 10 deterministic gameplay/audio simulations passed |
 | Transport + video + gameplay + root smoke after gameplay handoff | Pass together on merged `0d3df40`; all accepted software remained green |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1` | Pass 2026-08-31; four calibrated protocol-v1 UART frames traversed transport and gameplay and produced atomic pixel snapshot, active video, 60 Hz game tick, and audio evidence |
+| Concurrent transport + video + gameplay + root smoke launch | Video and gameplay passed; transport and root smoke failed only because both first-use WSL runners extracted the same local Icarus files concurrently. No RTL compilation/assertion failure was reported |
+| `wsl -e sh sim/common/run_transport_wsl.sh` (sequential rerun) | Pass 2026-08-31; complete transport suite passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/video/run_video_tests.ps1` | Pass 2026-08-31; all video elaboration and behavioral regressions passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` | Pass 2026-08-31; all 10 gameplay/audio simulations passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass 2026-08-31; vectors, local Markdown links, packages, and four interface seams passed |
 
 No hardware was used, programmed, wired, or measured.
 
@@ -89,7 +95,9 @@ Any future contract change must use the versioned frozen-contract process; do no
 - The registered iPhone 13 was unavailable to Xcode during readiness check `3297905`; no GATT or delivery evidence could be collected.
 - Video software timing uses nominal 1650-by-750 totals; vendor HDMI reference compatibility, actual clocks, timing closure, and monitor behavior remain unverified.
 - Gameplay thresholds/constants use synthetic traces; recorded multi-user motion classification and a real one-phone FPGA rally remain required before G1.
+- The local Icarus first-use bootstrap races if multiple WSL-backed suites launch concurrently; initialize once or run those commands sequentially.
+- The integrated structural module has no board pin, PLL/MMCM, HDMI vendor IP, or project constraints because those facts remain unverified; it is not yet a bitstream-ready top.
 
 ## Next action
 
-Create and test structural integration for transport `1b72824`, video `48890d9`, and gameplay `5cfb1df` without claiming gated readiness. Poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`; collect C1/C2/C3/G1 evidence when hardware is available.
+Obtain and record the verified board constraint source, clock/reset topology, UART/Pmod wiring, HDMI/audio requirements, and installed Vivado/IP versions before building the board project. Poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`; collect C1/C2/C3/G1 evidence when hardware is available.
