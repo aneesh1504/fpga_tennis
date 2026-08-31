@@ -11,6 +11,9 @@ package gameplay_tuning_pkg;
   localparam logic signed [31:0] NET_HEIGHT_Q16 = 32'sh0001_0000;
   localparam logic signed [31:0] GRAVITY_PER_TICK_Q16 = -32'sd256;
   localparam logic signed [31:0] STOP_VERTICAL_SPEED_Q16 = 32'sd768;
+  localparam logic signed [31:0] SHOT_BASE_LIFT_Q16 = 32'sd4096;
+  localparam logic signed [31:0] SHOT_MIN_LIFT_Q16 = 32'sd2048;
+  localparam logic signed [31:0] SHOT_MAX_LIFT_Q16 = 32'sd12288;
 
   function automatic logic [16:0] abs_s16(input logic signed [15:0] value);
     if (value == -16'sd32768) begin

@@ -31,7 +31,7 @@ module tb_shot_mapper;
     aim_x = 16'sh7fff;
     timing_error_q16 = 32'sh7fff_ffff;
     #1;
-    if ((velocity_y_q16 <= 0) || (velocity_z_q16 != 32'sd65536)
+    if ((velocity_y_q16 <= 0) || (velocity_z_q16 != 32'sd12288)
         || (velocity_x_q16 < 0)) begin
       $fatal(1, "maximum shot did not remain bounded");
     end
@@ -39,7 +39,7 @@ module tb_shot_mapper;
     toward_player_two = 1'b0;
     lift = -16'sd32768;
     #1;
-    if ((velocity_y_q16 >= 0) || (velocity_z_q16 != 32'sd8192)) begin
+    if ((velocity_y_q16 >= 0) || (velocity_z_q16 != 32'sd2048)) begin
       $fatal(1, "reverse/minimum shot mapping failed");
     end
 

@@ -15,10 +15,10 @@ module shot_mapper (
   logic signed [31:0] lift_candidate;
 
   function automatic logic signed [31:0] clamp_lift(input logic signed [31:0] value);
-    if (value < 32'sd8192) begin
-      clamp_lift = 32'sd8192;
-    end else if (value > 32'sd65536) begin
-      clamp_lift = 32'sd65536;
+    if (value < SHOT_MIN_LIFT_Q16) begin
+      clamp_lift = SHOT_MIN_LIFT_Q16;
+    end else if (value > SHOT_MAX_LIFT_Q16) begin
+      clamp_lift = SHOT_MAX_LIFT_Q16;
     end else begin
       clamp_lift = value;
     end
@@ -28,6 +28,6 @@ module shot_mapper (
   assign velocity_x_q16 = sat_s32(lateral_sum);
   assign speed_magnitude = 32'sd32768 + $signed({1'b0, strength});
   assign velocity_y_q16 = toward_player_two ? speed_magnitude : -speed_magnitude;
-  assign lift_candidate = 32'sd16384 + ($signed(lift) <<< 2);
+  assign lift_candidate = SHOT_BASE_LIFT_Q16 + ($signed(lift) <<< 1);
   assign velocity_z_q16 = clamp_lift(lift_candidate);
 endmodule

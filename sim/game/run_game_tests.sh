@@ -36,7 +36,7 @@ compile_and_run() {
 }
 
 PACKAGES="rtl/packages/protocol_pkg.sv rtl/packages/game_types_pkg.sv rtl/packages/video_types_pkg.sv rtl/game/gameplay_tuning_pkg.sv"
-GAME_RTL="rtl/game/swing_detector.sv rtl/game/shot_mapper.sv rtl/game/ball_physics.sv rtl/game/rally_judge.sv rtl/game/tennis_rules.sv rtl/game/game_engine.sv rtl/game/render_state_mailbox.sv"
+GAME_RTL="rtl/game/swing_detector.sv rtl/game/shot_mapper.sv rtl/game/ball_physics.sv rtl/game/rally_judge.sv rtl/game/tennis_rules.sv rtl/game/scripted_opponent.sv rtl/game/game_engine.sv rtl/game/render_state_mailbox.sv"
 AUDIO_RTL="rtl/audio/tone_voice.sv rtl/audio/audio_mixer.sv rtl/audio/pwm_audio_out.sv rtl/audio/audio_engine.sv"
 
 # Word splitting is intentional for these repository-relative source lists.
@@ -53,8 +53,12 @@ compile_and_run tennis_rules tb_tennis_rules sim/game/tb_tennis_rules.sv $PACKAG
 # shellcheck disable=SC2086
 compile_and_run game_engine tb_game_engine sim/game/tb_game_engine.sv $PACKAGES $GAME_RTL
 # shellcheck disable=SC2086
+compile_and_run scripted_opponent tb_scripted_opponent sim/game/tb_scripted_opponent.sv $PACKAGES $GAME_RTL
+# shellcheck disable=SC2086
+compile_and_run scripted_rally tb_scripted_rally sim/game/tb_scripted_rally.sv $PACKAGES $GAME_RTL
+# shellcheck disable=SC2086
 compile_and_run render_mailbox tb_render_state_mailbox sim/game/tb_render_state_mailbox.sv $PACKAGES $GAME_RTL
 # shellcheck disable=SC2086
 compile_and_run audio tb_audio sim/game/tb_audio.sv $PACKAGES $AUDIO_RTL
 
-echo "PASS: gameplay/audio regression (8 self-checking simulations)"
+echo "PASS: gameplay/audio regression (10 self-checking simulations)"

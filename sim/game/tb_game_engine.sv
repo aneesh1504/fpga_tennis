@@ -15,6 +15,7 @@ module tb_game_engine;
   logic player_two_sample_ready_a;
   motion_sample_t player_two_sample;
   transport_health_t player_two_health;
+  logic scripted_opponent_enable;
   game_render_state_t render_state_a;
   logic audio_valid_a;
   logic audio_ready;
@@ -40,6 +41,7 @@ module tb_game_engine;
     .player_two_sample_ready(player_two_sample_ready_a),
     .player_two_sample,
     .player_two_health,
+    .scripted_opponent_enable,
     .render_state(render_state_a),
     .audio_valid(audio_valid_a),
     .audio_ready,
@@ -83,6 +85,7 @@ module tb_game_engine;
     player_two_health = '0;
     player_two_health.connected = 1'b1;
     player_two_health.calibrated = 1'b1;
+    scripted_opponent_enable = 1'b0;
     audio_ready = 1'b0;
     repeat (3) @(negedge clk_sys);
     rst_sys_n = 1'b1;

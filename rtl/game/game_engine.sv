@@ -11,6 +11,7 @@ module game_engine (
   output logic                            player_two_sample_ready,
   input  protocol_pkg::motion_sample_t    player_two_sample,
   input  protocol_pkg::transport_health_t player_two_health,
+  input  logic                            scripted_opponent_enable,
   output video_types_pkg::game_render_state_t render_state,
   output logic                            audio_valid,
   input  logic                            audio_ready,
@@ -32,6 +33,14 @@ module game_engine (
   logic player_two_swing_valid;
   logic player_one_swing_ready;
   logic player_two_swing_ready;
+  logic player_two_effective_valid;
+  logic player_two_effective_ready;
+  motion_sample_t player_two_effective_sample;
+  transport_health_t player_two_effective_health;
+  logic scripted_sample_valid;
+  logic scripted_sample_ready;
+  motion_sample_t scripted_sample;
+  transport_health_t scripted_health;
   logic player_one_pending_valid_q;
   logic player_two_pending_valid_q;
 
@@ -114,13 +123,34 @@ module game_engine (
     .swing_event(player_one_swing)
   );
 
+  scripted_opponent opponent (
+    .clk_sys,
+    .rst_sys_n,
+    .enable(scripted_opponent_enable),
+    .game_tick,
+    .render_state,
+    .sample_valid(scripted_sample_valid),
+    .sample_ready(scripted_sample_ready),
+    .sample(scripted_sample),
+    .health(scripted_health)
+  );
+
+  assign player_two_effective_valid = scripted_opponent_enable
+                                    ? scripted_sample_valid : player_two_sample_valid;
+  assign player_two_effective_sample = scripted_opponent_enable
+                                     ? scripted_sample : player_two_sample;
+  assign player_two_effective_health = scripted_opponent_enable
+                                     ? scripted_health : player_two_health;
+  assign player_two_sample_ready = !scripted_opponent_enable && player_two_effective_ready;
+  assign scripted_sample_ready = scripted_opponent_enable && player_two_effective_ready;
+
   swing_detector player_two_detector (
     .clk_sys,
     .rst_sys_n,
-    .sample_valid(player_two_sample_valid),
-    .sample_ready(player_two_sample_ready),
-    .sample(player_two_sample),
-    .health(player_two_health),
+    .sample_valid(player_two_effective_valid),
+    .sample_ready(player_two_effective_ready),
+    .sample(player_two_effective_sample),
+    .health(player_two_effective_health),
     .swing_valid(player_two_swing_valid),
     .swing_ready(player_two_swing_ready),
     .swing_event(player_two_swing)
@@ -231,7 +261,8 @@ module game_engine (
 
   assign render_state.valid = 1'b1;
   assign render_state.player_one_connected = player_one_health.connected && !player_one_health.stale;
-  assign render_state.player_two_connected = player_two_health.connected && !player_two_health.stale;
+  assign render_state.player_two_connected = player_two_effective_health.connected
+                                           && !player_two_effective_health.stale;
   assign render_state.player_two_serves = player_two_serves;
   assign render_state.player_one_x_q8_8 = -16'sh0180;
   assign render_state.player_one_y_q8_8 = -16'sh0700;
