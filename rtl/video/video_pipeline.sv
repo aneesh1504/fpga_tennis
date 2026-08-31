@@ -1,8 +1,8 @@
 module video_pipeline (
   input  logic                                clk_pix,
   input  logic                                rst_pix_n,
-  input  video_types_pkg::game_render_state_t render_state,
-  input  logic                                snapshot_ready_toggle,
+  input  video_types_pkg::game_render_state_t render_state_pix,
+  input  logic                                pixel_state_valid,
   output logic                                vblank_request_toggle,
   output logic                                snapshot_pending,
   output logic [11:0]                         pixel_x,
@@ -91,8 +91,6 @@ module video_pipeline (
   logic start_of_frame_d2;
 
   logic vertical_blank_d;
-  logic ready_seen;
-  logic ready_changed;
 
   video_timing_720p timing (
     .clk_pix,
@@ -108,8 +106,8 @@ module video_pipeline (
   );
 
   perspective_projector project_player_one (
-    .court_x_q8_8(render_state.player_one_x_q8_8),
-    .court_y_q8_8(render_state.player_one_y_q8_8),
+    .court_x_q8_8(render_state_pix.player_one_x_q8_8),
+    .court_y_q8_8(render_state_pix.player_one_y_q8_8),
     .height_q8_8(16'sd0),
     .screen_x(player_one_screen_x),
     .screen_y(player_one_screen_y),
@@ -117,8 +115,8 @@ module video_pipeline (
   );
 
   perspective_projector project_player_two (
-    .court_x_q8_8(render_state.player_two_x_q8_8),
-    .court_y_q8_8(render_state.player_two_y_q8_8),
+    .court_x_q8_8(render_state_pix.player_two_x_q8_8),
+    .court_y_q8_8(render_state_pix.player_two_y_q8_8),
     .height_q8_8(16'sd0),
     .screen_x(player_two_screen_x),
     .screen_y(player_two_screen_y),
@@ -126,17 +124,17 @@ module video_pipeline (
   );
 
   perspective_projector project_ball (
-    .court_x_q8_8(render_state.ball_x_q8_8),
-    .court_y_q8_8(render_state.ball_y_q8_8),
-    .height_q8_8(render_state.ball_z_q8_8),
+    .court_x_q8_8(render_state_pix.ball_x_q8_8),
+    .court_y_q8_8(render_state_pix.ball_y_q8_8),
+    .height_q8_8(render_state_pix.ball_z_q8_8),
     .screen_x(ball_screen_x),
     .screen_y(ball_screen_y),
     .perspective_width(unused_width_ball)
   );
 
   perspective_projector project_shadow (
-    .court_x_q8_8(render_state.ball_x_q8_8),
-    .court_y_q8_8(render_state.ball_y_q8_8),
+    .court_x_q8_8(render_state_pix.ball_x_q8_8),
+    .court_y_q8_8(render_state_pix.ball_y_q8_8),
     .height_q8_8(16'sd0),
     .screen_x(shadow_screen_x),
     .screen_y(shadow_screen_y),
@@ -176,10 +174,10 @@ module video_pipeline (
     .pixel_x(raw_x),
     .pixel_y(raw_y),
     .video_data_enable(raw_vde),
-    .sprite_enable(render_state.valid && render_state.player_one_connected),
+    .sprite_enable(render_state_pix.valid && render_state_pix.player_one_connected),
     .center_x(player_one_screen_x),
     .bottom_y(player_one_screen_y),
-    .pose(render_state.player_one_anim),
+    .pose(render_state_pix.player_one_anim),
     .mirror(1'b0),
     .sprite_valid(near_player_valid_d1),
     .sprite_rgb(near_player_rgb_d1)
@@ -197,10 +195,10 @@ module video_pipeline (
     .pixel_x(raw_x),
     .pixel_y(raw_y),
     .video_data_enable(raw_vde),
-    .sprite_enable(render_state.valid && render_state.player_two_connected),
+    .sprite_enable(render_state_pix.valid && render_state_pix.player_two_connected),
     .center_x(player_two_screen_x),
     .bottom_y(player_two_screen_y),
-    .pose(render_state.player_two_anim),
+    .pose(render_state_pix.player_two_anim),
     .mirror(1'b1),
     .sprite_valid(far_player_valid_d1),
     .sprite_rgb(far_player_rgb_d1)
@@ -212,7 +210,7 @@ module video_pipeline (
     .pixel_x(raw_x),
     .pixel_y(raw_y),
     .video_data_enable(raw_vde),
-    .render_state,
+    .render_state(render_state_pix),
     .ui_valid(ui_valid_d1),
     .ui_rgb(ui_rgb_d1)
   );
@@ -224,7 +222,7 @@ module video_pipeline (
     shadow_dy = $signed({1'b0, raw_y}) - $signed(shadow_screen_y);
     ball_valid_raw = 1'b0;
     ball_rgb_raw   = 24'h000000;
-    if (raw_vde && render_state.valid && render_state.ball_visible) begin
+    if (raw_vde && render_state_pix.valid && render_state_pix.ball_visible) begin
       if ((ball_dx * ball_dx + ball_dy * ball_dy) <= 25) begin
         ball_valid_raw = 1'b1;
         ball_rgb_raw   = 24'hfff36a;
@@ -257,21 +255,15 @@ module video_pipeline (
     .composed_rgb
   );
 
-  assign ready_changed = (snapshot_ready_toggle != ready_seen);
-
   always_ff @(posedge clk_pix or negedge rst_pix_n) begin
     if (!rst_pix_n) begin
       vertical_blank_d      <= 1'b0;
-      ready_seen            <= 1'b0;
       vblank_request_toggle <= 1'b0;
       snapshot_pending      <= 1'b0;
     end else begin
       vertical_blank_d <= raw_vertical_blank;
-      if (ready_changed) begin
-        ready_seen       <= snapshot_ready_toggle;
-        snapshot_pending <= 1'b0;
-      end
-      if (raw_vertical_blank && !vertical_blank_d && (!snapshot_pending || ready_changed)) begin
+      if (pixel_state_valid) snapshot_pending <= 1'b0;
+      if (raw_vertical_blank && !vertical_blank_d && (!snapshot_pending || pixel_state_valid)) begin
         vblank_request_toggle <= ~vblank_request_toggle;
         snapshot_pending      <= 1'b1;
       end

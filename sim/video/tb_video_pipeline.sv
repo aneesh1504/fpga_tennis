@@ -4,7 +4,7 @@ module tb_video_pipeline;
   logic clk_pix = 1'b0;
   logic rst_pix_n = 1'b0;
   game_render_state_t render_state;
-  logic snapshot_ready_toggle;
+  logic pixel_state_valid;
   logic vblank_request_toggle;
   logic snapshot_pending;
   logic [11:0] pixel_x;
@@ -35,7 +35,12 @@ module tb_video_pipeline;
   always #1 clk_pix = ~clk_pix;
   assign rgb = {red, green, blue};
 
-  video_pipeline dut (.*);
+  video_pipeline dut (
+    .clk_pix, .rst_pix_n, .render_state_pix(render_state), .pixel_state_valid,
+    .vblank_request_toggle, .snapshot_pending, .pixel_x, .pixel_y,
+    .hsync, .vsync, .video_data_enable, .start_of_line, .start_of_frame,
+    .red, .green, .blue
+  );
 
   initial begin
     render_state = '0;
@@ -56,7 +61,7 @@ module tb_video_pipeline;
     render_state.player_two_points = 2'd3;
     render_state.player_one_swing_meter = 16'h8000;
     render_state.player_two_swing_meter = 16'h4000;
-    snapshot_ready_toggle = 1'b0;
+    pixel_state_valid = 1'b0;
     request_seen = 1'b0;
     request_count = 0;
     repeat (4) @(negedge clk_pix);
@@ -76,6 +81,7 @@ module tb_video_pipeline;
     p2_meter_count = 0;
 
     do begin
+      pixel_state_valid = 1'b0;
       if (video_data_enable) begin
         active_count = active_count + 1;
         if (pixel_x >= 1280 || pixel_y >= 720) $fatal(1, "pipeline VDE/coordinate misalignment");
@@ -98,7 +104,7 @@ module tb_video_pipeline;
       if (vblank_request_toggle != request_seen) begin
         request_seen = vblank_request_toggle;
         request_count = request_count + 1;
-        snapshot_ready_toggle = request_seen;
+        pixel_state_valid = 1'b1;
       end
       @(negedge clk_pix);
     end while (!start_of_frame);
