@@ -7,7 +7,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 - Execution mode: Four parallel implementation tracks after F0
 - Current gate: C1/C2/C3/G1 development in parallel
 - Last completed gate/checkpoint: F0 interface freeze
-- Overall status: iOS software handoff accepted; transport, video, and gameplay/audio implementation active; hardware gates remain open
+- Overall status: iOS and transport software handoffs accepted; video and gameplay/audio implementation active; hardware gates remain open
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
 - Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
@@ -19,7 +19,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 |---|---|---|---|
 | Interface freeze | Passed | All deliverables, reviews, and merged smoke tests passed | This file and `docs/00_interface_freeze.md` |
 | iOS controller | Software complete; hardware pending | Physical iPhone/BLE/FPGA evidence | `status/ios.md` |
-| Transport RTL | In progress | F0 passed | `status/transport.md` |
+| Transport RTL | Software complete; hardware pending | C1/C2 physical evidence and Vivado implementation | `status/transport.md` |
 | Video | In progress | F0 passed | `status/video.md` |
 | Gameplay | In progress | F0 passed | `status/gameplay.md` |
 | Integration | Waiting | C2 + C3 + G1 | `status/integration.md` |
@@ -75,8 +75,8 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | In progress; hardware pending | iOS software `3aaf1fb` accepted with 13 tests; transport implementation active |
-| C2 two-board path | In progress; hardware pending | Transport implementation active |
+| C1 BLE sensor path | Software complete; hardware pending | iOS `3aaf1fb` and transport `1b72824` accepted; physical two-minute run pending |
+| C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | In progress; hardware pending | Video implementation active |
 | G1 gameplay simulation | In progress | Gameplay/audio implementation active |
 | C4 integrated game | Not started | — |
@@ -93,6 +93,9 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | `git diff --check` and `git diff origin/main..HEAD --check` | Pass; no whitespace errors |
 | `git merge --ff-only origin/work/ios` | Pass; software implementation `3aaf1fb` and status `973d63e` merged |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` after iOS merge | Pass; 6 vectors, 22 Markdown files, package elaboration, and all 4 interface seams passed |
+| `git merge --no-edit origin/work/transport` | Pass; transport software handoff `1b72824` fast-forwarded onto main |
+| `wsl -e sh sim/common/run_transport_wsl.sh` after transport merge | Pass; UART/FIFO/CRC, all frozen vectors and rejection/recovery cases, health/stale/backpressure, dual-player RX, forwarding FIFO, and Board B full-duplex suites passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` after transport merge | Pass; 6 vectors, 22 Markdown files, package elaboration, and all 4 interface seams passed |
 
 ## Open issues and risks
 
@@ -103,4 +106,4 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 
 ## Next action
 
-Continue the three Windows implementation tracks independently. Resolve `IOS-REQ-001` through the status-file message bus when physical iPhone/Boolean Board access is available, without blocking video or gameplay simulation.
+Continue video and gameplay/audio independently. Prepare a verified board project around transport `1b72824`; resolve `IOS-REQ-001` when physical iPhone/Boolean Board access is available, without blocking C3 or G1 simulation.
