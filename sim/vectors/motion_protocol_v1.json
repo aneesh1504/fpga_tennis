@@ -1,0 +1,61 @@
+{
+  "format_version": 1,
+  "protocol_version": 1,
+  "vectors": [
+    {
+      "name": "normal_values",
+      "purpose": "ordinary positive, negative, and zero sensor values",
+      "sequence": 4660,
+      "accepted": true,
+      "expected_crc_hex": "6cef",
+      "raw_hex": "01010101341278563412001000f00010000200fe0000ff7f000000000000ef6c",
+      "framed_hex": "01010101341278563412001000f00010000200fe0000ff7f000000000000ef6c0a"
+    },
+    {
+      "name": "signed_limits",
+      "purpose": "int16 minimum, maximum, minus one, zero, and one",
+      "sequence": 43981,
+      "accepted": true,
+      "expected_crc_hex": "fd70",
+      "raw_hex": "01010200cdabffffffff0080ff7fffffff7f008001000080ff7fffff000070fd",
+      "framed_hex": "01010200cdabffffffff0080ff7fffffff7f008001000080ff7fffff000070fd0a"
+    },
+    {
+      "name": "escaped_terminator_and_escape",
+      "purpose": "raw 0x0a and 0x7d in sequence, timestamp, and sensor fields",
+      "sequence": 32010,
+      "accepted": true,
+      "expected_crc_hex": "3358",
+      "raw_hex": "010101010a7d7d0a7d0a0a007d0083fff6ff00000100ff7f0000000000005833",
+      "framed_hex": "010101017d2a7d5d7d5d7d2a7d5d7d2a7d2a007d5d0083fff6ff00000100ff7f00000000000058330a"
+    },
+    {
+      "name": "bad_crc",
+      "purpose": "normal vector with the stored CRC low bit inverted",
+      "sequence": 4660,
+      "accepted": false,
+      "expected_error": "bad_crc",
+      "expected_crc_hex": "6cef",
+      "raw_hex": "01010101341278563412001000f00010000200fe0000ff7f000000000000ee6c",
+      "framed_hex": "01010101341278563412001000f00010000200fe0000ff7f000000000000ee6c0a"
+    },
+    {
+      "name": "sequence_wrap_before",
+      "purpose": "last sequence value before modulo wrap",
+      "sequence": 65535,
+      "accepted": true,
+      "expected_crc_hex": "2ccc",
+      "raw_hex": "01010201fffffeffffff000000000010000000000000ff7f000000000000cc2c",
+      "framed_hex": "01010201fffffeffffff000000000010000000000000ff7f000000000000cc2c0a"
+    },
+    {
+      "name": "sequence_wrap_after",
+      "purpose": "zero is in order after sequence 65535",
+      "sequence": 0,
+      "accepted": true,
+      "expected_crc_hex": "2b81",
+      "raw_hex": "010102010000ffffffff000000000010000000000000ff7f000000000000812b",
+      "framed_hex": "010102010000ffffffff000000000010000000000000ff7f000000000000812b0a"
+    }
+  ]
+}
