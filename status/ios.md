@@ -23,6 +23,7 @@
 - `xcodegen generate --spec ios-controller/project.yml` — pass; reproducible project generated.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'generic/platform=iOS Simulator' build-for-testing CODE_SIGNING_ALLOWED=NO` — pass.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test CODE_SIGNING_ALLOWED=NO -quiet` — pass on iOS Simulator 26.4.1: 13 tests, 0 failures, 0 skipped.
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun devicectl list devices` and `xcodebuild ... -showdestinations` — registered iPhone 13 detected as unavailable; no physical iOS destination was available for building or testing.
 
 No physical iPhone, BLE peripheral, or FPGA was used in this review.
 
@@ -39,6 +40,7 @@ None. The iOS owner accepts protocol document/API `1.0`, wire version `0x01`, sh
 - The active developer directory is Command Line Tools rather than full Xcode; builds can use the verified `DEVELOPER_DIR` override without changing global machine state.
 - BLE names, UUIDs, characteristic properties, maximum write length, and physical-device behavior remain unverified.
 - Core Motion availability, signing, BLE discovery/streaming, reconnect behavior, and 50 Hz delivery still require a physical iPhone and programmed Boolean Board.
+- The registered iPhone 13 was unavailable to Xcode during the 2026-08-31 readiness check; connect/unlock/trust it before the device build can proceed.
 
 ## Next action
 
