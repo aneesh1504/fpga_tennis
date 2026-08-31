@@ -1,7 +1,7 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: F0 passed; iOS and transport software accepted; video/gameplay active; full integration waiting for physical C2, C3, and G1
+- State: F0 passed; iOS, transport, and video software accepted; gameplay active; full integration waiting for physical C2/C3 and G1
 - Track document: `docs/06_integration.md`
 - Integration commit: This F0 commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
@@ -12,7 +12,7 @@
 | F0 interface freeze | Freeze `8255a4c`; reviews `9e62763`, `7d10743`, `0c6f9cd`, `f27b234`; merged `2083519` | All four consumers accepted without changes; complete merged smoke suite passed | Yes |
 | iOS/C1 | Software `3aaf1fb`; status `973d63e` | Xcode build-for-testing passed; simulator suite 13 passed, 0 failed/skipped; physical BLE/iPhone/FPGA evidence explicitly pending | Software accepted; C1 No |
 | Transport/C2 | Software handoff `1b72824` | Complete transport regression passed after merge: frozen vectors/rejections, sequence/stale/backpressure, dual-player RX, forwarding FIFO, and Board B simultaneous full-duplex; physical BLE/boards, XDC, Vivado/timing, and five-minute counters pending | Software accepted; C2 No |
-| Video/C3 | — | — | No |
+| Video/C3 | Software handoff `48890d9` | Deterministic assets, timing/components/atomic-snapshot tests, and complete 720p active-frame scene passed after merge; Vivado/HDMI/XDC/clocks/timing/utilization/monitor and five-minute stability evidence pending | Software accepted; C3 No |
 | Gameplay/G1 | — | — | No |
 
 ## F0 interface versions
@@ -64,6 +64,9 @@
 | `git merge --no-edit origin/work/transport` | Pass; software handoff `1b72824` fast-forwarded onto main |
 | `wsl -e sh sim/common/run_transport_wsl.sh` after transport handoff | Pass with Icarus 12.0/Python 3.12.3: all transport primitive, decoder, health, dual-player, forwarder, and full-duplex tests passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` after transport handoff | Pass: 6 vectors; 22 Markdown files; packages compile/elaborate; all four frozen seams pass |
+| `git merge --no-edit origin/work/video` | Pass; software handoff `48890d9` merged without ownership conflicts |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/video/run_video_tests.ps1` after video handoff | Pass with Icarus 12.0: nominal frame timing, layer/component priority, atomic old/new snapshots, and full procedural scene passed |
+| Transport regression and `scripts/run_smoke.ps1` after video handoff | Pass: transport suite remained green; root smoke validated 6 vectors, 23 Markdown files, packages, and all frozen seams |
 
 No hardware was used, programmed, wired, or measured.
 
@@ -81,7 +84,8 @@ Any future contract change must use the versioned frozen-contract process; do no
 - Full integration remains blocked on accepted C2, C3, and G1 handoffs.
 - `IOS-REQ-001` requires physical hardware and remains open; iOS simulator evidence is accepted only as a software handoff.
 - The registered iPhone 13 was unavailable to Xcode during readiness check `3297905`; no GATT or delivery evidence could be collected.
+- Video software timing uses nominal 1650-by-750 totals; vendor HDMI reference compatibility, actual clocks, timing closure, and monitor behavior remain unverified.
 
 ## Next action
 
-Package transport `1b72824` into verified board projects without guessing pins, poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`, continue video/gameplay work, and accept each remaining handoff only with exact commit, tests/results, and hardware requirements.
+Complete and accept G1, then integrate transport `1b72824`, video `48890d9`, and gameplay without guessing hardware values. Poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`; C2/C3 remain hardware-open.
