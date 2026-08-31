@@ -1,13 +1,18 @@
 # iOS Track Status
 
 - Owner: `ios-track-owner` (Codex macOS task)
-- State: F0 consumer review complete; waiting for orchestration to close F0
+- State: Software implementation complete; physical BLE/iPhone/FPGA verification pending
 - Track document: `docs/02_track_ios_controller.md`
-- Handoff commit: None
+- Handoff commit: `3aaf1fb`
 
 ## Implemented
 
-No app implementation started; F0 remains open. Reviewed motion protocol `1.0`, shared protocol interface `0x0100`, the transport-to-gameplay boundary as it affects emitted samples, and all six frozen vectors at F0 commit `8255a4c`.
+- Added a generated Xcode project and native SwiftUI controller app.
+- Added processed Core Motion sampling at 50 Hz with explicit neutral-grip calibration and relative attitude quaternion.
+- Added protocol-v1 encoding with saturation, ties-away-from-zero rounding, CRC-16/CCITT-FALSE, byte escaping, and sequence/timestamp handling.
+- Added BLE discovery without invented UUIDs, explicit writable-characteristic selection, verified-UUID configuration seams, chunking, write-without-response flow control, newest-sample backpressure policy, and automatic reconnect state.
+- Added Player 1/Player 2 selection, connection/calibration/streaming diagnostics, sample rate, sequence, and drop counters.
+- Added unit tests consuming the frozen golden vectors plus state-machine, reconnect, chunk-order, and backpressure tests.
 
 ## Tests and evidence
 
@@ -15,6 +20,9 @@ No app implementation started; F0 remains open. Reviewed motion protocol `1.0`, 
 - `swift - sim/vectors/motion_protocol_v1.json` with an independent, ephemeral Swift reviewer — pass: CRC-16/CCITT-FALSE, little-endian sequence values, escaping, framing, and accepted/rejected CRC behavior matched all six vectors.
 - `swift --version` — Apple Swift 6.2.1 targeting arm64 macOS.
 - `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -version` — Xcode 26.4.1, build 17E202.
+- `xcodegen generate --spec ios-controller/project.yml` — pass; reproducible project generated.
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'generic/platform=iOS Simulator' build-for-testing CODE_SIGNING_ALLOWED=NO` — pass.
+- `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -project ios-controller/MotionTennisController.xcodeproj -scheme MotionTennisController -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test CODE_SIGNING_ALLOWED=NO -quiet` — pass on iOS Simulator 26.4.1: 13 tests, 0 failures, 0 skipped.
 
 No physical iPhone, BLE peripheral, or FPGA was used in this review.
 
@@ -28,10 +36,10 @@ None. The iOS owner accepts protocol document/API `1.0`, wire version `0x01`, sh
 
 ## Risks/blockers
 
-- F0 has not passed until orchestration records all four consumer acknowledgements.
 - The active developer directory is Command Line Tools rather than full Xcode; builds can use the verified `DEVELOPER_DIR` override without changing global machine state.
 - BLE names, UUIDs, characteristic properties, maximum write length, and physical-device behavior remain unverified.
+- Core Motion availability, signing, BLE discovery/streaming, reconnect behavior, and 50 Hz delivery still require a physical iPhone and programmed Boolean Board.
 
 ## Next action
 
-Have orchestration merge this acknowledgement with the other consumer reviews and mark F0 passed. Then implement the minimal Swift encoder and permanent golden-vector tests before BLE streaming.
+Install on a physical iPhone, discover and record the verified Boolean Board GATT interface, select/configure its write characteristic, and coordinate with the transport owner for the one-byte UART check and two-board C1 runs. Do not mark C1 passed from simulator evidence.
