@@ -3,12 +3,20 @@ import CoreBluetooth
 import Foundation
 
 struct BLEConfiguration {
+    var advertisedNamePrefix: String?
     var verifiedServiceUUID: CBUUID?
     var verifiedWriteCharacteristicUUID: CBUUID?
 
     static let discovery = BLEConfiguration(
+        advertisedNamePrefix: nil,
         verifiedServiceUUID: nil,
         verifiedWriteCharacteristicUUID: nil
+    )
+
+    static let booleanBoard = BLEConfiguration(
+        advertisedNamePrefix: "RD_BOOL_",
+        verifiedServiceUUID: CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"),
+        verifiedWriteCharacteristicUUID: CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E")
     )
 }
 
@@ -69,7 +77,7 @@ final class BLEManager: NSObject, ObservableObject {
     private var lastPeripheralID: UUID?
     private var userInitiatedDisconnect = false
 
-    init(configuration: BLEConfiguration = .discovery) {
+    init(configuration: BLEConfiguration = .booleanBoard) {
         self.configuration = configuration
         super.init()
         _ = central
@@ -101,6 +109,7 @@ final class BLEManager: NSObject, ObservableObject {
         central.stopScan()
         lastPeripheralID = id
         userInitiatedDisconnect = false
+        connectedPeripheral = peripheral
         state = .connecting
         central.connect(peripheral)
     }
@@ -213,6 +222,7 @@ extension BLEManager: CBCentralManagerDelegate {
         let name = peripheral.name
             ?? advertisementData[CBAdvertisementDataLocalNameKey] as? String
             ?? "Unnamed peripheral"
+        if let prefix = configuration.advertisedNamePrefix, !name.hasPrefix(prefix) { return }
         let item = DiscoveredPeripheral(id: peripheral.identifier, name: name, rssi: RSSI.intValue)
         if let index = discoveredPeripherals.firstIndex(where: { $0.id == item.id }) {
             discoveredPeripherals[index] = item

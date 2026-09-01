@@ -2,7 +2,7 @@
 
 The native SwiftUI controller samples processed Core Motion data at 50 Hz and sends protocol-v1 motion frames over a selected BLE writable characteristic.
 
-BLE UUIDs are intentionally not hard-coded. Until the Boolean Board interface is verified, the app scans nearby peripherals, discovers writable characteristics, and requires an explicit selection. Verified UUID filtering can then be supplied through `BLEConfiguration` without changing the wire encoder.
+The stock Boolean Board BLE interface was physically verified on 2026-09-01. The app filters the observed `RD_BOOL_` advertised-name prefix, discovers service `6E400001-B5A3-F393-E0A9-E50E24DCCA9E`, and automatically selects writable characteristic `6E400002-B5A3-F393-E0A9-E50E24DCCA9E`. Discovery-mode configuration remains available for diagnostic scans and future hardware revisions.
 
 ## Generate and test
 

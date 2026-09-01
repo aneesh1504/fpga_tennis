@@ -13,6 +13,7 @@
 		4079B9651E21000EFEAFC0AB /* ControllerSessionMachineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */; };
 		50D85488C6593A2E275F33AD /* ControllerSessionMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FE8185BA7208B24BD349E32 /* ControllerSessionMachine.swift */; };
 		652DF9F983279EE599051DBB /* MotionPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7995543F2A4FFB8A4AF0E58 /* MotionPacket.swift */; };
+		939F84D7EA3154A5FDB56694 /* BLEDiscoveryDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E98DE4382113F1E3414F03E /* BLEDiscoveryDeviceTests.swift */; };
 		B48F0884086AB65C5C8707CE /* MotionSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F281CD8100D76789BD5E58 /* MotionSampler.swift */; };
 		B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */; };
 		B97A80C9F2AE5D4FB9086E76 /* motion_protocol_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */; };
@@ -36,6 +37,7 @@
 		015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = motion_protocol_v1.json; sourceTree = "<group>"; };
 		2E55945BA01813861F36115F /* MotionSamplerDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSamplerDeviceTests.swift; sourceTree = "<group>"; };
 		32F281CD8100D76789BD5E58 /* MotionSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSampler.swift; sourceTree = "<group>"; };
+		5E98DE4382113F1E3414F03E /* BLEDiscoveryDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEDiscoveryDeviceTests.swift; sourceTree = "<group>"; };
 		735AFB3CBE6A309659A165AD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestFrameQueue.swift; sourceTree = "<group>"; };
 		8654DF6512D33233AAFACCFC /* MotionTennisControllerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionTennisControllerApp.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		C15481AC1782F718D52B81AB /* MotionTennisControllerTests */ = {
 			isa = PBXGroup;
 			children = (
+				5E98DE4382113F1E3414F03E /* BLEDiscoveryDeviceTests.swift */,
 				A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */,
 				D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */,
 				F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */,
@@ -210,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				939F84D7EA3154A5FDB56694 /* BLEDiscoveryDeviceTests.swift in Sources */,
 				4079B9651E21000EFEAFC0AB /* ControllerSessionMachineTests.swift in Sources */,
 				B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */,
 				C1FD8B9A981083A272B252AE /* MotionPacketTests.swift in Sources */,
