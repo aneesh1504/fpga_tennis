@@ -6,9 +6,10 @@ This manifest intentionally contains no inferred hardware values. An item moves 
 |---|---|---|---|
 | Board model | Real Digital Boolean Board | Project decision; physical revision unverified | `plan.md` |
 | FPGA part/design target | `xc7s50csga324-1` | Vendor documentation verified; installed part not physically rechecked | [Real Digital first-project guide](https://www.realdigital.org/doc/c4ceeb20d229e5f3d4e32f3a74e343e9) |
-| Board A identifier/serial | Unverified | Unverified | — |
+| Connected board cable identifier | FTDI/JTAG target `887235230329A`; Windows FTDI serial `887235230329`; UART `COM4` | Observed on one connected board 2026-08-31; board PCB revision and role as Board A/B unverified | Vivado Hardware Manager and Windows PnP enumeration |
+| Board A identifier/serial | Unassigned | One physical board detected, but its eventual A/B role and PCB revision remain unverified | — |
 | Board B identifier/serial | Unverified | Unverified | — |
-| Vivado version | Unverified | Unverified | — |
+| Vivado version | 2026.1, SW build 6511674, IP build 6504888 | Verified on this Windows host 2026-08-31 | `scripts/run_vivado_validation.ps1 -Mode Probe` |
 | Boolean Board XDC source | Real Digital download `8d5c167add28c014173edcf51db78bb9.txt`; SHA-256 `4ad1c2f9a5f08219b03914ae65b44e4f0382c0aa8c0f35bd4a0513b8e1c2a6d3` | Vendor-source file verified 2026-08-31; physical-board revision compatibility unverified | [Real Digital Boolean constraints file](https://www.realdigital.org/downloads/8d5c167add28c014173edcf51db78bb9.txt) |
 | BLE advertised device name | Unverified | Unverified | — |
 | BLE service UUID | Unverified | Unverified | — |

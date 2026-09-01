@@ -97,7 +97,8 @@ Any future contract change must use the versioned frozen-contract process; do no
 - Gameplay thresholds/constants use synthetic traces; recorded multi-user motion classification and a real one-phone FPGA rally remain required before G1.
 - The local Icarus first-use bootstrap races if multiple WSL-backed suites launch concurrently; initialize once or run those commands sequentially.
 - The integrated structural module has no board pin, PLL/MMCM, HDMI vendor IP, or project constraints because those facts remain unverified; it is not yet a bitstream-ready top.
-- Vendor-source review recorded the design target and fixed clock/BLE/HDMI/audio pins, but not physical board revision compatibility or any Pmod selection. `vivado` was not found on this host's `PATH`.
+- Vendor-source review recorded the design target and fixed clock/BLE/HDMI/audio pins, but not physical board revision compatibility or any Pmod selection. Vivado is installed outside `PATH` at `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat`.
+- Update 2026-08-31: Vivado 2026.1 was located and one connected JTAG target `887235230329A` with one `xc7s50` was read-only probed. Transport handoff `ec86e08` and gameplay handoff `5921501` clear their Vivado synthesis defects. Board A preliminary OOC timing remains failing at WNS `-14.368 ns`; no bitstream or hardware gate is claimed.
 
 ## Next action
 

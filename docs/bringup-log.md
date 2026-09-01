@@ -27,3 +27,13 @@
 - Computed SHA-256 `4ad1c2f9a5f08219b03914ae65b44e4f0382c0aa8c0f35bd4a0513b8e1c2a6d3` over the downloaded official constraints bytes.
 - Did not select Pmod pins, infer connector orientation, populate project XDC files, generate IP, synthesize, implement, program hardware, or collect measurements.
 - Result: Board-fixed vendor facts are source-verified; physical revision compatibility and all physical gates remain open.
+
+## 2026-08-31 — Single-board JTAG and Vivado validation
+
+- Exactly one physical board was connected; no two-board test was attempted.
+- Windows enumerated FTDI serial `887235230329` and USB UART `COM4`.
+- Vivado 2026.1 Hardware Manager discovered one target, `887235230329A`, containing one `xc7s50` device; the probe did not program or reset it.
+- Board B out-of-context synthesis exposed and then cleared a FIFO RAM-inference warning through transport-owner fix `3ad7049`; final handoff `ec86e08` reported 0 errors/critical warnings/warnings and positive preliminary 100 MHz slack.
+- Board A out-of-context synthesis exposed and then cleared an enum typing error through gameplay-owner fix `4a17360`; final handoff `5921501` synthesized with 0 errors and 0 critical warnings.
+- Board A preliminary out-of-context timing is not closed: WNS `-14.368 ns`, TNS `-677.425 ns`. This is a failure requiring further constraint/path analysis; it is not C3 evidence.
+- No XDC was applied, no IP generated, no bitstream built or programmed, and no physical BLE/video/audio measurement was taken.
