@@ -75,7 +75,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | **Not passed**; first-pair iPhone-to-BLE stream and FPGA configuration/reset indicators passed, receipt unverified | iOS through `1c1404c`; diagnostic `03c53cc`; startup HIGH, LED15 and LED0 illuminated; receive counters and second pair pending |
+| C1 BLE sensor path | **Not passed**; first-pair iPhone-to-BLE stream and FPGA configuration/reset indicators passed, receipt unverified | iOS through `1c1404c`; current diagnostic `52c8150`; startup HIGH; receive counters and second pair pending |
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |
@@ -124,6 +124,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_diagnostic.tcl` | Pass from build commit `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd`; DRC 0 errors/critical warnings; timing closed at WNS `3.355 ns`, WHS `0.156 ns`; 504 LUTs, 481 registers, 0 BRAM, 0 DSP; bitstream SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b` |
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl` | Blocked before programming; Vivado reported no matching hardware targets on `localhost`; no startup or LED observation was possible |
 | Same diagnostic programming command, retried at 2026-09-01 14:40 local time after reconnect | Pass; selected exactly `localhost:3121/xilinx_tcf/Xilinx/887235230329A` and `xc7s50_0`; Vivado reported startup status HIGH and `DIAGNOSTIC_PROGRAM_PASS` |
+| Diagnostic rebuild from `52c815053e0942e1279bb52a4c49c7db39f209a1` and programming retry | Pass; LED2 now latches receipt of probe byte `0x41`; DRC 0 errors/critical warnings; timing closed at WNS `3.356 ns`, WHS `0.159 ns`; 504 LUTs, 482 registers; bitstream SHA-256 `ac3d2952b688aae4f9983038abcd706e380ff171fd5b72de97dd7192e2dfc67f`; startup HIGH on `887235230329A`/`xc7s50_0` |
 | `wsl -e sh sim/common/run_transport_wsl.sh` (sequential rerun after a known concurrent bootstrap race) | Pass; UART/FIFO/CRC primitives, all vectors and rejection/recovery behavior, health/backpressure, dual receive, forwarding, and Board B full-duplex passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1` | Pass; serial transport-to-gameplay-to-video/audio structural integration passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass; 6 vectors, links in 23 Markdown files, shared packages, and all four frozen seams passed |
@@ -139,7 +140,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 - The official constraints source does not select this project's board-to-board Pmod ports; connector choice, header position, pin mapping, orientation, and continuity must be verified before wiring.
 - One connected `xc7s50` was discovered over JTAG without programming. Board B OOC synthesis is clean after transport fix `3ad7049`; Board A synthesis is clean after gameplay fix `4a17360`, but preliminary Board A OOC timing fails with WNS `-14.368 ns`, so no timing or hardware gate is passed.
 - A constrained transport-only Board A bitstream from `d457063` implemented with WNS `4.487 ns`, DRC 0 errors/critical warnings, and programmed successfully. This is bring-up evidence only; it does not close C1 or supersede the failing full-system preliminary timing result.
-- The integration diagnostic image from `03c53cc` closes timing and exposes reset, raw UART, decoded frames, sequence, calibration/stale state, and all required error counters. It was programmed successfully on target `887235230329A` with startup HIGH after the target was reconnected; its LED/seven-segment observation path and live counters still require physical observation.
+- The current integration diagnostic image from `52c8150` closes timing and exposes reset, raw UART, latched `0x41` receipt, decoded frames, sequence, calibration/stale state, and all required error counters. It is programmed on target `887235230329A` with startup HIGH; live receive counters still require physical observation.
 - Physical observation after programming found LED15 and LED0 illuminated. This verifies the diagnostic configuration witness, active-high LED path, and reset deassertion on the powered board; it does not establish BLE-UART receipt.
 
 ## Next action

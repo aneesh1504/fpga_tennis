@@ -85,17 +85,19 @@ Hardware evidence is limited to the explicitly recorded sessions. The earlier tr
 
 ## C1 FPGA diagnostic — 2026-09-01
 
-- Integration diagnostic source/build commit: `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd`.
+- Current integration diagnostic source/build commit: `52c815053e0942e1279bb52a4c49c7db39f209a1`; supersedes initial diagnostic build `03c53cc` by latching receipt of probe byte `0x41` independently of the following `0x0A` terminator.
 - Top/constraints: `board_a_transport_diagnostic_top` and `config/board_a_transport_diagnostic.xdc`; only vendor-recorded clock, BTN0, BLE RX, switches, discrete LEDs, and onboard seven-segment pins are applied. No Pmod mapping or BLE UUID is encoded in the FPGA image.
 - Reset review: `reset_sync` accepts an asynchronous active-low reset and synchronously releases it after two clock edges. The top supplies `~btn_reset`; vendor documentation says the pushbutton is normally low/high when pressed, so release deasserts reset. This source/constraint review is internally consistent but is not a substitute for a live observation.
 - LED review: vendor documentation identifies the discrete LEDs as active high; LED 0 is constrained to package pin `G1`. LED 15 is driven constantly high as a configuration/polarity witness independent of reset. A powered, programmed board is required to distinguish lost volatile configuration from reset or observation faults.
 - Build command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_diagnostic.tcl`.
-- Build result: pass; DRC 0 errors and 0 critical warnings, timing closed at WNS `3.355 ns` and WHS `0.156 ns`; utilization 504 Slice LUTs, 481 Slice registers, 0 BRAM, and 0 DSP.
-- Bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b`.
+- Current build result: pass; DRC 0 errors and 0 critical warnings, timing closed at WNS `3.356 ns` and WHS `0.159 ns`; utilization 504 Slice LUTs, 482 Slice registers, 0 BRAM, and 0 DSP.
+- Current bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `ac3d2952b688aae4f9983038abcd706e380ff171fd5b72de97dd7192e2dfc67f`.
 - Programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
 - Initial programming attempt: blocked before programming because no target was enumerated.
 - Programming retry at 2026-09-01 14:40 local time: pass. Windows enumerated FTDI serial `887235230329` and `COM4`; Vivado selected exactly `localhost:3121/xilinx_tcf/Xilinx/887235230329A` and `xc7s50_0`, reported `End of startup status: HIGH`, and emitted `DIAGNOSTIC_PROGRAM_PASS`. The interfaces remained enumerated after programming, establishing that the board was powered at that observation instant. Continuous power and the LED/seven-segment path require visual confirmation.
 - Physical observation after programming: LED15 and LED0 were both illuminated. This accepts the constant configuration/active-high witness and reset-deasserted indicator; no BTN0 intervention was required. Raw UART and decoded-frame observations remain pending.
+- Corrected diagnostic programming at 2026-09-01 14:51 local time: pass on exactly `887235230329A`/`xc7s50_0`, startup status HIGH. Configuration/reset indicators must be re-observed because reprogramming resets their state.
+- Windows BLE probe command: set `PYTHONPATH` to the isolated directory populated by `python -m pip install --target %LOCALAPPDATA%\fpga_tennis_tools\bleak -r scripts/requirements-ble-diagnostic.txt`, then run `python scripts/run_ble_diagnostic_probe.py`. The first scan found zero `RD_BOOL_88723523033D` advertisements, so no GATT connection or write occurred. This is consistent with the peripheral being connected or non-advertising but does not establish which; retry when it advertises.
 - Post-build regressions: `wsl -e sh sim/common/run_transport_wsl.sh`, `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1`, and `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` all passed on sequential rerun. The root smoke run also validated all local Markdown links in 23 files. An initial concurrent transport/root-smoke launch hit the already-recorded shared Icarus extraction race and was not an HDL failure.
 
 ### Ready-for-iOS procedure
@@ -112,7 +114,7 @@ Hardware evidence is limited to the explicitly recorded sessions. The earlier tr
 
 | Request | Target | Requested action | Relevant commit/interface | Gate impact | State |
 |---|---|---|---|---|---|
-| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | Execute the exact diagnostic procedure above and record the first-pair FPGA counters, then repeat on the required second phone/board pair. Respond only in `status/ios.md`; do not infer absent values. | iOS through `1c1404c`; diagnostic `03c53cc`; protocol `1.0` / wire `0x01` | Blocks C1; does not block C3 or G1 | GATT and first-pair phone-to-BLE delivery complete; FPGA counters and second pair pending |
+| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | Execute the exact diagnostic procedure above and record the first-pair FPGA counters, then repeat on the required second phone/board pair. Respond only in `status/ios.md`; do not infer absent values. | iOS through `1c1404c`; diagnostic `52c8150`; protocol `1.0` / wire `0x01` | Blocks C1; does not block C3 or G1 | GATT and first-pair phone-to-BLE delivery complete; FPGA counters and second pair pending |
 
 Any future contract change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
 

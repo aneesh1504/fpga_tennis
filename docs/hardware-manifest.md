@@ -49,13 +49,13 @@ The PCB revision is not exposed by the JTAG device record and was not visually c
 
 | Item | Verified value | Evidence |
 |---|---|---|
-| Build commit | `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd` | Clean committed diagnostic source used by Vivado |
+| Build commit | `52c815053e0942e1279bb52a4c49c7db39f209a1` | Clean committed current diagnostic source used by Vivado; supersedes initial `03c53cc` image |
 | Top | `board_a_transport_diagnostic_top` | `rtl/board_a_transport_diagnostic_top.sv` |
 | FPGA target | `xc7s50csga324-1`; JTAG device `xc7s50_0` | Vivado implementation and Hardware Manager programming |
 | Applied constraints | `config/board_a_transport_diagnostic.xdc`; vendor-recorded clock, BTN0, BLE RX, switches, LEDs, and seven-segment pins only | Constraint file and recorded Real Digital source |
-| Bitstream SHA-256 | `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b` | Local generated bitstream |
-| Implementation timing | WNS `3.355 ns`; WHS `0.156 ns`; timing closed | Vivado timing summary |
-| Utilization | 504 Slice LUTs; 481 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
+| Bitstream SHA-256 | `ac3d2952b688aae4f9983038abcd706e380ff171fd5b72de97dd7192e2dfc67f` | Local generated current bitstream |
+| Implementation timing | WNS `3.356 ns`; WHS `0.159 ns`; timing closed | Vivado timing summary |
+| Utilization | 504 Slice LUTs; 482 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
 | Programming result | Pass on retry; target `887235230329A`, device `xc7s50_0`, startup status HIGH | Vivado Hardware Manager 2026-09-01 14:40 local time |
 
 The diagnostic image does not verify the physical PCB revision. It encodes no Pmod connector mapping and no BLE UUID. Programming, the LED15 configuration/active-high witness, and the LED0 reset-deasserted indicator are physically verified; BLE-UART and decoded-frame indicators remain unverified.
