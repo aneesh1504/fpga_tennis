@@ -17,6 +17,7 @@
 		B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */; };
 		B97A80C9F2AE5D4FB9086E76 /* motion_protocol_v1.json in Resources */ = {isa = PBXBuildFile; fileRef = 015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */; };
 		C1FD8B9A981083A272B252AE /* MotionPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */; };
+		CE99C798B080AD4D0F2136B4 /* MotionSamplerDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E55945BA01813861F36115F /* MotionSamplerDeviceTests.swift */; };
 		E3FD7CADBA42237E12C8E528 /* LatestFrameQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */; };
 		F1A301E1EB11E0822512C41E /* ControllerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDADDC9448F5DAC9AD788848 /* ControllerViewModel.swift */; };
 /* End PBXBuildFile section */
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		015C6ACDAF65B0AB3033F6C7 /* motion_protocol_v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = motion_protocol_v1.json; sourceTree = "<group>"; };
+		2E55945BA01813861F36115F /* MotionSamplerDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSamplerDeviceTests.swift; sourceTree = "<group>"; };
 		32F281CD8100D76789BD5E58 /* MotionSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionSampler.swift; sourceTree = "<group>"; };
 		735AFB3CBE6A309659A165AD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7EDF4C2160099FF923DBC88F /* LatestFrameQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestFrameQueue.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				A034DBB5B52F7E6B6FF08730 /* ControllerSessionMachineTests.swift */,
 				D5C40E0B54FFD8FD2A8DA262 /* LatestFrameQueueTests.swift */,
 				F8B92E1D3CD1AD298ED7A401 /* MotionPacketTests.swift */,
+				2E55945BA01813861F36115F /* MotionSamplerDeviceTests.swift */,
 			);
 			path = MotionTennisControllerTests;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 				4079B9651E21000EFEAFC0AB /* ControllerSessionMachineTests.swift in Sources */,
 				B6EB43EFB734098548FDBAA9 /* LatestFrameQueueTests.swift in Sources */,
 				C1FD8B9A981083A272B252AE /* MotionPacketTests.swift in Sources */,
+				CE99C798B080AD4D0F2136B4 /* MotionSamplerDeviceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
