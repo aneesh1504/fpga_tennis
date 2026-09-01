@@ -1,5 +1,7 @@
+set repo_root [file normalize [file join [file dirname [info script]] ..]]
 set output_dir [file normalize [file join $::env(LOCALAPPDATA) fpga_tennis_vivado board_a_transport_bringup]]
 file mkdir $output_dir
+cd $output_dir
 
 foreach source_file [list \
     rtl/packages/protocol_pkg.sv \
@@ -11,9 +13,9 @@ foreach source_file [list \
     rtl/common/motion_packet_decoder.sv \
     rtl/common/motion_transport_rx.sv \
     rtl/board_a_transport_bringup_top.sv] {
-    read_verilog -sv $source_file
+    read_verilog -sv [file join $repo_root $source_file]
 }
-read_xdc config/board_a_transport_bringup.xdc
+read_xdc [file join $repo_root config board_a_transport_bringup.xdc]
 
 synth_design -top board_a_transport_bringup_top -part xc7s50csga324-1
 opt_design

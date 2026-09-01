@@ -1,4 +1,5 @@
 set bitstream_path [file normalize [file join $::env(LOCALAPPDATA) fpga_tennis_vivado board_a_transport_bringup board_a_transport_bringup.bit]]
+cd [file dirname $bitstream_path]
 if {![file exists $bitstream_path]} {
     error "Bring-up bitstream does not exist: $bitstream_path"
 }
