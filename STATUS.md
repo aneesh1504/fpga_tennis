@@ -18,7 +18,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 | Work | State | Depends on | Detailed status |
 |---|---|---|---|
 | Interface freeze | Passed | All deliverables, reviews, and merged smoke tests passed | This file and `docs/00_interface_freeze.md` |
-| iOS controller | Software complete; hardware pending | Physical iPhone/BLE/FPGA evidence | `status/ios.md` |
+| iOS controller | Physical iPhone/Core Motion passed; BLE pending | Programmed FPGA and GATT/stream evidence | `status/ios.md` |
 | Transport RTL | Software complete; hardware pending | C1/C2 physical evidence and Vivado implementation | `status/transport.md` |
 | Video | Software complete; hardware pending | C3 Vivado/HDMI/monitor evidence | `status/video.md` |
 | Gameplay | Software complete; validation pending | Recorded phone traces and one-phone FPGA rally for G1 | `status/gameplay.md` |
@@ -75,7 +75,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | Software complete; hardware pending | iOS `3aaf1fb` and transport `1b72824` accepted; physical two-minute run pending |
+| C1 BLE sensor path | iPhone motion side passed; BLE/FPGA stream pending | iOS physical handoff `d4adcac` accepted; programmed transport build and two-minute BLE run pending |
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |

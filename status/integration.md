@@ -14,6 +14,7 @@
 | Transport/C2 | Software handoff `1b72824` | Complete transport regression passed after merge: frozen vectors/rejections, sequence/stale/backpressure, dual-player RX, forwarding FIFO, and Board B simultaneous full-duplex; physical BLE/boards, XDC, Vivado/timing, and five-minute counters pending | Software accepted; C2 No |
 | Video/C3 | Software handoff `48890d9` | Deterministic assets, timing/components/atomic-snapshot tests, and complete 720p active-frame scene passed after merge; Vivado/HDMI/XDC/clocks/timing/utilization/monitor and five-minute stability evidence pending | Software accepted; C3 No |
 | Gameplay/G1 | Software handoff `5cfb1df` | 10/10 deterministic simulations passed after merge: swing/shot/physics/rules, replay, scripted opponent rally, mailbox, and audio; recorded phone traces and real one-phone FPGA rally pending | Software accepted; G1 No |
+| iOS physical device | `d4adcac` | Signed physical iPhone 17 build, installation, launch, real Core Motion sampling, and neutral calibration passed; 14/14 physical tests passed | Device motion accepted; BLE/C1 No |
 
 ## F0 interface versions
 
