@@ -75,7 +75,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | iPhone motion side passed; BLE/FPGA stream pending | iOS physical handoff `d4adcac` accepted; programmed transport build and two-minute BLE run pending |
+| C1 BLE sensor path | iPhone motion and programmed FPGA bring-up passed; BLE stream pending | iOS `d4adcac`; programmed build `d457063`; GATT discovery and two-minute BLE run pending |
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |
@@ -124,6 +124,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 - `board_a_system` is a simulation-verified structural integration module. It is not a board bitstream top and contains no guessed clock, reset, UART, HDMI, audio, or connector pin assignments.
 - The official constraints source does not select this project's board-to-board Pmod ports; connector choice, header position, pin mapping, orientation, and continuity must be verified before wiring.
 - One connected `xc7s50` was discovered over JTAG without programming. Board B OOC synthesis is clean after transport fix `3ad7049`; Board A synthesis is clean after gameplay fix `4a17360`, but preliminary Board A OOC timing fails with WNS `-14.368 ns`, so no timing or hardware gate is passed.
+- A constrained transport-only Board A bitstream from `d457063` implemented with WNS `4.487 ns`, DRC 0 errors/critical warnings, and programmed successfully. This is bring-up evidence only; it does not close C1 or supersede the failing full-system preliminary timing result.
 
 ## Next action
 

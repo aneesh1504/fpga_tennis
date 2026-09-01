@@ -29,6 +29,22 @@ This manifest intentionally contains no inferred hardware values. An item moves 
 | Measured BLE delivery rate/loss | Unverified | Unverified | — |
 | Measured board-to-board error rate | Unverified | Unverified | — |
 
+## Programmed bring-up configuration — 2026-08-31
+
+| Item | Verified value | Evidence |
+|---|---|---|
+| Logical role for this session | Board A BLE/transport bring-up | `docs/bringup-log.md` |
+| Build commit | `d457063a5d73834767cd37fd96dc79568fa8ee6a` | Clean committed source used by Vivado |
+| Top | `board_a_transport_bringup_top` | `rtl/board_a_transport_bringup_top.sv` |
+| FPGA target | `xc7s50csga324-1`; JTAG reported `xc7s50_0` | Vivado 2026.1 build and Hardware Manager |
+| Applied constraints | `config/board_a_transport_bringup.xdc`; clock `F14`, reset button `J2`, BLE RX `F5`, LEDs `G1/G2/F1/F2/E1/E2/E3/E5/E6/C3/B2/A2/B3/A3/B4/A4` | Real Digital XDC source recorded above |
+| Bitstream SHA-256 | `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1` | Local generated bitstream |
+| Implementation timing | WNS `4.487 ns`; TNS `0`; WHS `0.116 ns`; THS `0` | Vivado timing summary |
+| Utilization | 290 Slice LUTs; 357 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
+| Programming result | Pass; startup status HIGH | Vivado Hardware Manager |
+
+The PCB revision is not exposed by the JTAG device record and was not visually confirmed. GATT UUIDs, characteristic properties, and BLE delivery remain unverified.
+
 ## Vendor-source pin record
 
 These are board-fixed package pins copied from the vendor constraints source. They are not proof of the revision installed on either physical board, and they do not select a Pmod connector.

@@ -100,6 +100,8 @@ Any future contract change must use the versioned frozen-contract process; do no
 - The integrated structural module has no board pin, PLL/MMCM, HDMI vendor IP, or project constraints because those facts remain unverified; it is not yet a bitstream-ready top.
 - Vendor-source review recorded the design target and fixed clock/BLE/HDMI/audio pins, but not physical board revision compatibility or any Pmod selection. Vivado is installed outside `PATH` at `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat`.
 - Update 2026-08-31: Vivado 2026.1 was located and one connected JTAG target `887235230329A` with one `xc7s50` was read-only probed. Transport handoff `ec86e08` and gameplay handoff `5921501` clear their Vivado synthesis defects. Board A preliminary OOC timing remains failing at WNS `-14.368 ns`; no bitstream or hardware gate is claimed.
+- Physical iPhone handoff `d4adcac` accepted: build, installation, launch, Core Motion sampling, calibration, and 14/14 physical tests passed; BLE remains unverified.
+- Transport bring-up build `d457063` used the official clock/button/BLE-RX/LED constraints only. Implementation passed at WNS `4.487 ns` with no DRC errors or critical warnings, and programming target `887235230329A`/`xc7s50_0` passed. PCB revision, UUIDs, BLE reception, and C1 remain unverified.
 
 ## Next action
 

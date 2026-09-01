@@ -37,3 +37,17 @@
 - Board A out-of-context synthesis exposed and then cleared an enum typing error through gameplay-owner fix `4a17360`; final handoff `5921501` synthesized with 0 errors and 0 critical warnings.
 - Board A preliminary out-of-context timing is not closed: WNS `-14.368 ns`, TNS `-677.425 ns`. This is a failure requiring further constraint/path analysis; it is not C3 evidence.
 - No XDC was applied, no IP generated, no bitstream built or programmed, and no physical BLE/video/audio measurement was taken.
+
+## 2026-08-31 — Board A BLE transport image build and programming
+
+- Exactly one connected board was used and assigned the logical Board A role for this bring-up only; PCB revision remains visually unverified.
+- Accepted iOS physical-device handoff `d4adcac`: signed build, installation, launch, Core Motion sample delivery, calibration, and 14/14 physical tests passed. No BLE evidence was included.
+- Build commit: `d457063a5d73834767cd37fd96dc79568fa8ee6a`.
+- Exact build command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_bringup.tcl`.
+- Configuration: `board_a_transport_bringup_top`, target `xc7s50csga324-1`, 100 MHz clock, 115,200-baud Player 1 BLE UART receiver, button reset, and LED health/gyro display. No Pmod pins or UUIDs are present.
+- Constraint source: `config/board_a_transport_bringup.xdc`, copied from the recorded official Real Digital constraint source.
+- Implementation passed with DRC 0 errors, 0 critical warnings, WNS `4.487 ns`, TNS `0`, WHS `0.116 ns`, THS `0`; utilization 290 LUTs, 357 registers, 0 BRAM, 0 DSP.
+- Generated bitstream SHA-256: `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1`.
+- Exact programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl`.
+- Programming passed on target `887235230329A`, device `xc7s50_0`; Vivado reported startup status HIGH.
+- Remaining: visually verify PCB revision, discover GATT UUIDs/properties, observe LED behavior, and run the one-byte and two-minute BLE delivery tests. C1 is not passed.
