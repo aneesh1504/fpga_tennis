@@ -1,7 +1,7 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: First-pair iOS BLE evidence is merged and a timing-clean Board A diagnostic image is ready; live FPGA counters and the second pair still block C1
+- State: First-pair iOS BLE evidence is merged and the timing-clean Board A diagnostic image is programmed with startup HIGH; live FPGA counters and the second pair still block C1
 - Track document: `docs/06_integration.md`
 - Structural integration commit: This commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
@@ -81,7 +81,7 @@
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_bringup.tcl` | Pass from build commit `d457063`; routed timing WNS `4.487 ns`, TNS `0`, WHS `0.116 ns`, THS `0`; DRC 0 errors/critical warnings; bitstream SHA-256 `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1` |
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl` | Pass; exactly one target `887235230329A`, device `xc7s50_0`, startup status HIGH |
 
-Hardware evidence is limited to the explicitly recorded sessions. The earlier transport image was programmed successfully; the diagnostic image could not be programmed because no JTAG target was present during the 2026-09-01 attempt.
+Hardware evidence is limited to the explicitly recorded sessions. The earlier transport image and the current diagnostic image were programmed successfully; live LED/seven-segment observations remain pending.
 
 ## C1 FPGA diagnostic — 2026-09-01
 
@@ -93,13 +93,14 @@ Hardware evidence is limited to the explicitly recorded sessions. The earlier tr
 - Build result: pass; DRC 0 errors and 0 critical warnings, timing closed at WNS `3.355 ns` and WHS `0.156 ns`; utilization 504 Slice LUTs, 481 Slice registers, 0 BRAM, and 0 DSP.
 - Bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b`.
 - Programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
-- Programming result: blocked before programming. Vivado connected to `localhost:3121` and reported `No matching targets found`; target `887235230329A`/`xc7s50_0` was not enumerated. Startup HIGH, continuous power, LED state, and the observation path therefore could not be reverified.
+- Initial programming attempt: blocked before programming because no target was enumerated.
+- Programming retry at 2026-09-01 14:40 local time: pass. Windows enumerated FTDI serial `887235230329` and `COM4`; Vivado selected exactly `localhost:3121/xilinx_tcf/Xilinx/887235230329A` and `xc7s50_0`, reported `End of startup status: HIGH`, and emitted `DIAGNOSTIC_PROGRAM_PASS`. The interfaces remained enumerated after programming, establishing that the board was powered at that observation instant. Continuous power and the LED/seven-segment path require visual confirmation.
 - Post-build regressions: `wsl -e sh sim/common/run_transport_wsl.sh`, `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1`, and `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` all passed on sequential rerun. The root smoke run also validated all local Markdown links in 23 files. An initial concurrent transport/root-smoke launch hit the already-recorded shared Icarus extraction race and was not an HDL failure.
 
 ### Ready-for-iOS procedure
 
-1. Connect and power the board whose JTAG target is `887235230329A`; keep USB/JTAG power continuously connected through programming and the entire run.
-2. Run the diagnostic programming command above. Proceed only after Vivado selects exactly `887235230329A` and `xc7s50_0`, completes programming, and reports startup status HIGH.
+1. Keep the currently programmed board whose JTAG target is `887235230329A` continuously powered through the entire run; do not unplug or power-cycle it.
+2. Programming already passed with exactly `887235230329A`, `xc7s50_0`, and startup HIGH. If power is interrupted, rerun the diagnostic programming command above and require the same result before proceeding.
 3. Before BLE traffic, record LED 15 and LED 0. Both must be on. If LED 15 is off, stop because configuration/power/active-high observation is not established. If LED 15 is on and LED 0 is off, press and release BTN0 once and record both states; stop if LED 0 does not illuminate after release.
 4. Set `SW[2:0]=001`. Send the acknowledged probe bytes `41 0A`. Record LED 1 changing state, LED 2 on, and seven-segment value `00000041`. Then set `SW[2:0]=000` and record a nonzero raw-byte count. These observations establish the BLE-to-FPGA UART path; a BLE-module activity LED alone does not.
 5. Select Player 1, calibrate, and run the same 50 Hz protocol-v1 stream for at least 120 seconds without power-cycling. Record LEDs 3 through 13 and photograph/transcribe each seven-segment selection: `000` raw byte count, `010` decoded frame count, `011` last sequence, `100` CRC errors, `101` framing errors, `110` sequence gaps, and `111` FIFO overflows.
@@ -131,4 +132,4 @@ Any future contract change must use the versioned frozen-contract process; do no
 
 ## Next action
 
-Reconnect target `887235230329A`, program the diagnostic image, and execute the exact ready-for-iOS procedure above. Poll `origin/work/ios:status/ios.md` after that rerun and merge only measured evidence. Do not pass C1 until the FPGA counters and second pair meet the checkpoint.
+Keep target `887235230329A` powered and execute the exact ready-for-iOS observation procedure above. Poll `origin/work/ios:status/ios.md` after that rerun and merge only measured evidence. Do not pass C1 until the FPGA counters and second pair meet the checkpoint.

@@ -64,4 +64,6 @@
 - Diagnostic bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b`.
 - Exact programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
 - Programming was blocked before touching a device: Vivado reported no matching targets. Startup HIGH, continuous FPGA power, PCB revision, LED behavior, and the diagnostic observation path remain physically unverified.
+- Programming retry at 2026-09-01 14:40 local time passed after the board reappeared. Windows enumerated FTDI serial `887235230329` and `COM4`; Vivado selected exactly target `887235230329A` and device `xc7s50_0`, reported startup status HIGH, and emitted `DIAGNOSTIC_PROGRAM_PASS`.
+- The FTDI/JTAG interfaces remained enumerated immediately after programming, confirming power at that instant. No claim is made about continued power after that check or about the visually displayed LED/seven-segment values.
 - C1 is not passed. Required next physical evidence is specified exactly in `status/integration.md`, followed by an independent second phone/board pair.
