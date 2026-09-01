@@ -1,7 +1,7 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: All software handoffs accepted and merged; Board A structural integration passes simulation; formal C2/C3/G1 and physical integration evidence still block C4
+- State: First-pair iOS BLE evidence is merged and a timing-clean Board A diagnostic image is ready; live FPGA counters and the second pair still block C1
 - Track document: `docs/06_integration.md`
 - Structural integration commit: This commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
@@ -10,7 +10,7 @@
 | Track/gate | Commit | Evidence reviewed | Accepted |
 |---|---|---|---|
 | F0 interface freeze | Freeze `8255a4c`; reviews `9e62763`, `7d10743`, `0c6f9cd`, `f27b234`; merged `2083519` | All four consumers accepted without changes; complete merged smoke suite passed | Yes |
-| iOS/C1 | Software `3aaf1fb`; status `973d63e` | Xcode build-for-testing passed; simulator suite 13 passed, 0 failed/skipped; physical BLE/iPhone/FPGA evidence explicitly pending | Software accepted; C1 No |
+| iOS/C1 | Software `3aaf1fb`; device `d4adcac`; BLE evidence `c0d7c6e`, `1c1404c` | Physical build/install/launch, Core Motion calibration, verified GATT, acknowledged write, and 120.007-second 6,033-frame phone-to-BLE run passed with zero local drops; FPGA receipt and second pair pending | First-pair phone/BLE accepted; C1 No |
 | Transport/C2 | Software handoff `1b72824` | Complete transport regression passed after merge: frozen vectors/rejections, sequence/stale/backpressure, dual-player RX, forwarding FIFO, and Board B simultaneous full-duplex; physical BLE/boards, XDC, Vivado/timing, and five-minute counters pending | Software accepted; C2 No |
 | Video/C3 | Software handoff `48890d9` | Deterministic assets, timing/components/atomic-snapshot tests, and complete 720p active-frame scene passed after merge; Vivado/HDMI/XDC/clocks/timing/utilization/monitor and five-minute stability evidence pending | Software accepted; C3 No |
 | Gameplay/G1 | Software handoff `5cfb1df` | 10/10 deterministic simulations passed after merge: swing/shot/physics/rules, replay, scripted opponent rally, mailbox, and audio; recorded phone traces and real one-phone FPGA rally pending | Software accepted; G1 No |
@@ -81,21 +81,44 @@
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_bringup.tcl` | Pass from build commit `d457063`; routed timing WNS `4.487 ns`, TNS `0`, WHS `0.116 ns`, THS `0`; DRC 0 errors/critical warnings; bitstream SHA-256 `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1` |
 | `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl` | Pass; exactly one target `887235230329A`, device `xc7s50_0`, startup status HIGH |
 
-No hardware was used, programmed, wired, or measured.
+Hardware evidence is limited to the explicitly recorded sessions. The earlier transport image was programmed successfully; the diagnostic image could not be programmed because no JTAG target was present during the 2026-09-01 attempt.
+
+## C1 FPGA diagnostic — 2026-09-01
+
+- Integration diagnostic source/build commit: `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd`.
+- Top/constraints: `board_a_transport_diagnostic_top` and `config/board_a_transport_diagnostic.xdc`; only vendor-recorded clock, BTN0, BLE RX, switches, discrete LEDs, and onboard seven-segment pins are applied. No Pmod mapping or BLE UUID is encoded in the FPGA image.
+- Reset review: `reset_sync` accepts an asynchronous active-low reset and synchronously releases it after two clock edges. The top supplies `~btn_reset`; vendor documentation says the pushbutton is normally low/high when pressed, so release deasserts reset. This source/constraint review is internally consistent but is not a substitute for a live observation.
+- LED review: vendor documentation identifies the discrete LEDs as active high; LED 0 is constrained to package pin `G1`. LED 15 is driven constantly high as a configuration/polarity witness independent of reset. A powered, programmed board is required to distinguish lost volatile configuration from reset or observation faults.
+- Build command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_diagnostic.tcl`.
+- Build result: pass; DRC 0 errors and 0 critical warnings, timing closed at WNS `3.355 ns` and WHS `0.156 ns`; utilization 504 Slice LUTs, 481 Slice registers, 0 BRAM, and 0 DSP.
+- Bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b`.
+- Programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
+- Programming result: blocked before programming. Vivado connected to `localhost:3121` and reported `No matching targets found`; target `887235230329A`/`xc7s50_0` was not enumerated. Startup HIGH, continuous power, LED state, and the observation path therefore could not be reverified.
+- Post-build regressions: `wsl -e sh sim/common/run_transport_wsl.sh`, `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1`, and `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` all passed on sequential rerun. The root smoke run also validated all local Markdown links in 23 files. An initial concurrent transport/root-smoke launch hit the already-recorded shared Icarus extraction race and was not an HDL failure.
+
+### Ready-for-iOS procedure
+
+1. Connect and power the board whose JTAG target is `887235230329A`; keep USB/JTAG power continuously connected through programming and the entire run.
+2. Run the diagnostic programming command above. Proceed only after Vivado selects exactly `887235230329A` and `xc7s50_0`, completes programming, and reports startup status HIGH.
+3. Before BLE traffic, record LED 15 and LED 0. Both must be on. If LED 15 is off, stop because configuration/power/active-high observation is not established. If LED 15 is on and LED 0 is off, press and release BTN0 once and record both states; stop if LED 0 does not illuminate after release.
+4. Set `SW[2:0]=001`. Send the acknowledged probe bytes `41 0A`. Record LED 1 changing state, LED 2 on, and seven-segment value `00000041`. Then set `SW[2:0]=000` and record a nonzero raw-byte count. These observations establish the BLE-to-FPGA UART path; a BLE-module activity LED alone does not.
+5. Select Player 1, calibrate, and run the same 50 Hz protocol-v1 stream for at least 120 seconds without power-cycling. Record LEDs 3 through 13 and photograph/transcribe each seven-segment selection: `000` raw byte count, `010` decoded frame count, `011` last sequence, `100` CRC errors, `101` framing errors, `110` sequence gaps, and `111` FIFO overflows.
+6. Acceptance for this rerun requires decoded frame count to advance throughout the run, last sequence to track the phone, calibrated asserted, stale deasserted while streaming, and CRC/framing/sequence-gap/overflow counters all zero. Record exact values and duration in `status/ios.md` on `origin/work/ios`; do not summarize them as merely “working.”
+7. Repeat the complete procedure on the required second independently identified phone/board pair. C1 remains open until both pairs satisfy the checkpoint.
 
 ## Open cross-track requests
 
 | Request | Target | Requested action | Relevant commit/interface | Gate impact | State |
 |---|---|---|---|---|---|
-| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | On a physical iPhone and programmed Boolean Board, record the advertised name, service UUID, writable characteristic UUID/properties, notify UUID/properties if present, maximum write-without-response length, device/iOS/app build, and observed discovery/connection result. Then coordinate a one-byte UART check and 50 Hz protocol-v1 stream once integration packages transport for hardware. Respond only in `status/ios.md`; do not infer absent values. | iOS `3aaf1fb`; transport `1b72824`; protocol `1.0` / wire `0x01`; response `44d0f79`; programmed board build pending | Blocks C1; does not block C3 or G1 | Acknowledged; waiting for connected/unlocked/trusted iPhone and programmed transport build |
+| `IOS-REQ-001` | `ios-track-owner` on `origin/work/ios` | Execute the exact diagnostic procedure above and record the first-pair FPGA counters, then repeat on the required second phone/board pair. Respond only in `status/ios.md`; do not infer absent values. | iOS through `1c1404c`; diagnostic `03c53cc`; protocol `1.0` / wire `0x01` | Blocks C1; does not block C3 or G1 | GATT and first-pair phone-to-BLE delivery complete; FPGA counters and second pair pending |
 
 Any future contract change must use the versioned frozen-contract process; do not patch around the contract in `rtl/board_a_top.sv`.
 
 ## Risks/blockers
 
-- Exact BLE UUIDs, writable/notify characteristics, payload limits, XDC source/pins, Pmod positions, Vivado/IP versions, board revisions, monitor mode, and all measurements are unverified.
+- First-pair BLE UUIDs, writable/notify properties, payload limits, and phone-side delivery are verified. FPGA receipt, physical PCB revision, Pmod positions, generated video IP, monitor mode, and the second pair remain unverified.
 - Full integration remains blocked on accepted C2, C3, and G1 handoffs.
-- `IOS-REQ-001` requires physical hardware and remains open; iOS simulator evidence is accepted only as a software handoff.
+- `IOS-REQ-001` remains open specifically for live FPGA counters and the required second pair; the first-pair iPhone/BLE evidence is accepted.
 - The registered iPhone 13 was unavailable to Xcode during readiness check `3297905`; no GATT or delivery evidence could be collected.
 - Video software timing uses nominal 1650-by-750 totals; vendor HDMI reference compatibility, actual clocks, timing closure, and monitor behavior remain unverified.
 - Gameplay thresholds/constants use synthetic traces; recorded multi-user motion classification and a real one-phone FPGA rally remain required before G1.
@@ -108,4 +131,4 @@ Any future contract change must use the versioned frozen-contract process; do no
 
 ## Next action
 
-Obtain and record the verified board constraint source, clock/reset topology, UART/Pmod wiring, HDMI/audio requirements, and installed Vivado/IP versions before building the board project. Poll `origin/work/ios:status/ios.md` for `IOS-REQ-001`; collect C1/C2/C3/G1 evidence when hardware is available.
+Reconnect target `887235230329A`, program the diagnostic image, and execute the exact ready-for-iOS procedure above. Poll `origin/work/ios:status/ios.md` after that rerun and merge only measured evidence. Do not pass C1 until the FPGA counters and second pair meet the checkpoint.

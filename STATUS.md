@@ -7,7 +7,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 - Execution mode: Four parallel implementation tracks after F0
 - Current gate: C1/C2/C3/G1 development in parallel
 - Last completed gate/checkpoint: F0 interface freeze
-- Overall status: All four software handoffs accepted and merged; Board A structural integration passes simulation; C1/C2/C3/G1 hardware/recorded-motion evidence remains open
+- Overall status: All four software handoffs and first-pair iOS BLE evidence are merged; the Board A diagnostic image builds cleanly, but the board is not currently enumerated for programming and C1/C2/C3/G1 remain open
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
 - Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
@@ -18,7 +18,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 | Work | State | Depends on | Detailed status |
 |---|---|---|---|
 | Interface freeze | Passed | All deliverables, reviews, and merged smoke tests passed | This file and `docs/00_interface_freeze.md` |
-| iOS controller | Physical iPhone/Core Motion passed; BLE pending | Programmed FPGA and GATT/stream evidence | `status/ios.md` |
+| iOS controller | First-pair phone/BLE path passed through CoreBluetooth | FPGA diagnostic counters and second phone/board pair | `status/ios.md` |
 | Transport RTL | Software complete; hardware pending | C1/C2 physical evidence and Vivado implementation | `status/transport.md` |
 | Video | Software complete; hardware pending | C3 Vivado/HDMI/monitor evidence | `status/video.md` |
 | Gameplay | Software complete; validation pending | Recorded phone traces and one-phone FPGA rally for G1 | `status/gameplay.md` |
@@ -66,7 +66,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 |---|---|---|
 | Vivado and locally generated IP versions | Vivado 2026.1 verified; generated project IP still unverified | Single-board probe 2026-08-31; `docs/hardware-manifest.md` |
 | Boolean Board XDC source and board-fixed pins | Vendor source and clock/BLE/HDMI/audio pins recorded; physical revision compatibility unverified | `docs/hardware-manifest.md` |
-| BLE names, UUIDs, and payload limits | Unverified | — |
+| BLE names, UUIDs, and payload limits | First physical pair verified; exact values recorded in the hardware manifest | iOS physical evidence `1c1404c` |
 | Board-to-board Pmod positions/wiring | Unverified | — |
 | Monitor mode, clocks, delivery rates, and error measurements | Unverified | — |
 
@@ -75,7 +75,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | iPhone motion and programmed FPGA bring-up passed; BLE stream pending | iOS `d4adcac`; programmed build `d457063`; GATT discovery and two-minute BLE run pending |
+| C1 BLE sensor path | **Not passed**; first-pair iPhone-to-BLE stream passed, FPGA receipt unverified | iOS through `1c1404c`; diagnostic build `03c53cc`; board absent from JTAG during diagnostic programming; second pair pending |
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |
@@ -114,10 +114,23 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` | Pass; 10/10 self-checking gameplay/audio simulations passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass; 6 vectors, local links in 23 Markdown files, shared packages, and all four frozen seams passed |
 
+## C1 diagnostic commands and results — 2026-09-01
+
+| Exact command | Result |
+|---|---|
+| `git fetch --all --prune` followed by ancestry checks | Pass; `origin/work/ios` through `1c1404c878c2db6fcfbe2e743f86acef1fe6a710` is merged into `main`; no later iOS rerun commit was present |
+| `Get-FileHash -Algorithm SHA256 $env:LOCALAPPDATA\fpga_tennis_vivado\board_a_transport_bringup\board_a_transport_bringup.bit` | Pass; `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1` |
+| `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl` | Blocked before programming; Vivado reported no matching hardware targets on `localhost` |
+| `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_diagnostic.tcl` | Pass from build commit `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd`; DRC 0 errors/critical warnings; timing closed at WNS `3.355 ns`, WHS `0.156 ns`; 504 LUTs, 481 registers, 0 BRAM, 0 DSP; bitstream SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b` |
+| `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl` | Blocked before programming; Vivado reported no matching hardware targets on `localhost`; no startup or LED observation was possible |
+| `wsl -e sh sim/common/run_transport_wsl.sh` (sequential rerun after a known concurrent bootstrap race) | Pass; UART/FIFO/CRC primitives, all vectors and rejection/recovery behavior, health/backpressure, dual receive, forwarding, and Board B full-duplex passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1` | Pass; serial transport-to-gameplay-to-video/audio structural integration passed |
+| `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass; 6 vectors, links in 23 Markdown files, shared packages, and all four frozen seams passed |
+
 ## Open issues and risks
 
 - The wire field is named `sequence_number` in SystemVerilog because `sequence` is a reserved keyword; consumers must use the frozen name.
-- No hardware was used. UUIDs, pins, board revisions, IP/tool versions, connector orientation, timing, delivery rates, and measurements remain unverified.
+- First-pair iPhone/BLE GATT and phone-side delivery are verified at `1c1404c`; FPGA receipt, PCB revision, and the second pair remain unverified.
 - Frozen-contract changes now require a versioned proposal, updated vectors/tests, and every affected-owner acknowledgement.
 - C1 requires physical iPhone, BLE peripheral, and programmed-board evidence; simulator results do not satisfy it.
 - The shared local Icarus bootstrap is not safe for first-use concurrent test launches; initialize it once or run WSL-backed suites sequentially.
@@ -125,7 +138,8 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 - The official constraints source does not select this project's board-to-board Pmod ports; connector choice, header position, pin mapping, orientation, and continuity must be verified before wiring.
 - One connected `xc7s50` was discovered over JTAG without programming. Board B OOC synthesis is clean after transport fix `3ad7049`; Board A synthesis is clean after gameplay fix `4a17360`, but preliminary Board A OOC timing fails with WNS `-14.368 ns`, so no timing or hardware gate is passed.
 - A constrained transport-only Board A bitstream from `d457063` implemented with WNS `4.487 ns`, DRC 0 errors/critical warnings, and programmed successfully. This is bring-up evidence only; it does not close C1 or supersede the failing full-system preliminary timing result.
+- The integration diagnostic image from `03c53cc` closes timing and exposes reset, raw UART, decoded frames, sequence, calibration/stale state, and all required error counters. The formerly observed target `887235230329A` was absent on 2026-09-01, so the image could not be programmed and its observation path is not physically verified.
 
 ## Next action
 
-Obtain the verified Boolean Board constraint source, clock/reset topology, UART/Pmod wiring, HDMI/audio integration requirements, and installed Vivado/IP versions before creating a bitstream project. Keep C1/C2/C3/G1 and C4 open until their required physical/recorded evidence is collected.
+Reconnect and power the board identified as `887235230329A`, program the committed diagnostic image without subsequently removing power, execute the exact observation procedure in `status/integration.md`, and commit the resulting FPGA counters on `origin/work/ios`. Then repeat on the required second phone/board pair. Keep C1 open until both requirements pass.

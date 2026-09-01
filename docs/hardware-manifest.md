@@ -11,11 +11,11 @@ This manifest intentionally contains no inferred hardware values. An item moves 
 | Board B identifier/serial | Unverified | Unverified | — |
 | Vivado version | 2026.1, SW build 6511674, IP build 6504888 | Verified on this Windows host 2026-08-31 | `scripts/run_vivado_validation.ps1 -Mode Probe` |
 | Boolean Board XDC source | Real Digital download `8d5c167add28c014173edcf51db78bb9.txt`; SHA-256 `4ad1c2f9a5f08219b03914ae65b44e4f0382c0aa8c0f35bd4a0513b8e1c2a6d3` | Vendor-source file verified 2026-08-31; physical-board revision compatibility unverified | [Real Digital Boolean constraints file](https://www.realdigital.org/downloads/8d5c167add28c014173edcf51db78bb9.txt) |
-| BLE advertised device name | Unverified | Unverified | — |
-| BLE service UUID | Unverified | Unverified | — |
-| Phone-to-board writable characteristic UUID | Unverified | Unverified | — |
-| Board-to-phone notify characteristic UUID | Unverified | Unverified | — |
-| Maximum BLE write-without-response length | Unverified | Unverified | — |
+| BLE advertised device name | `RD_BOOL_88723523033D` | Verified on first physical pair 2026-09-01 | iOS evidence `1c1404c` |
+| BLE service UUID | `6E400001-B5A3-F393-E0A9-E50E24DCCA9E` | Verified on first physical pair 2026-09-01 | iOS evidence `1c1404c` |
+| Phone-to-board writable characteristic UUID | `6E400002-B5A3-F393-E0A9-E50E24DCCA9E`; `writeWithoutResponse`, `write` | Verified on first physical pair 2026-09-01 | iOS evidence `1c1404c` |
+| Board-to-phone notify characteristic UUID | `6E400003-B5A3-F393-E0A9-E50E24DCCA9E`; `notify` | Verified on first physical pair 2026-09-01 | iOS evidence `1c1404c` |
+| Maximum BLE write length reported by iOS | 244 bytes without response; 512 bytes with response | Verified on first physical pair 2026-09-01 | iOS evidence `1c1404c` |
 | Board A Pmod TX/RX/GND pins and connector positions | Unverified | Unverified | — |
 | Board B Pmod TX/RX/GND pins and connector positions | Unverified | Unverified | — |
 | Onboard BLE-to-FPGA UART | 115,200 baud; newline-terminated module packets up to 256 bytes | Vendor documentation verified; physical operation unverified | [Real Digital reference manual](https://www.realdigital.org/doc/02013cd17602c8af749f00561f88ae21) |
@@ -26,7 +26,7 @@ This manifest intentionally contains no inferred hardware values. An item moves 
 | Audio output circuit | Two AC-coupled amplifier/filter channels, documented 50 Hz–5 kHz for square/PWM/PDM signals | Vendor documentation verified; physical response/level unmeasured | [Real Digital reference manual](https://www.realdigital.org/doc/02013cd17602c8af749f00561f88ae21) |
 | Tested monitor and accepted mode | Unverified | Unverified | — |
 | Measured pixel clock | Unverified | Unverified | — |
-| Measured BLE delivery rate/loss | Unverified | Unverified | — |
+| Measured BLE delivery rate/loss | Phone handed 6,033/6,033 frames to CoreBluetooth in 120.007 s at 50.272 Hz, 0 local drops; FPGA receipt unverified | First-pair phone/BLE boundary verified 2026-09-01; not an FPGA-path measurement | iOS evidence `1c1404c` |
 | Measured board-to-board error rate | Unverified | Unverified | — |
 
 ## Programmed bring-up configuration — 2026-08-31
@@ -43,7 +43,22 @@ This manifest intentionally contains no inferred hardware values. An item moves 
 | Utilization | 290 Slice LUTs; 357 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
 | Programming result | Pass; startup status HIGH | Vivado Hardware Manager |
 
-The PCB revision is not exposed by the JTAG device record and was not visually confirmed. GATT UUIDs, characteristic properties, and BLE delivery remain unverified.
+The PCB revision is not exposed by the JTAG device record and was not visually confirmed. The first-pair GATT interface and phone-to-BLE delivery are verified at `1c1404c`; BLE-to-FPGA UART receipt remains unverified.
+
+## Board A diagnostic configuration — 2026-09-01
+
+| Item | Verified value | Evidence |
+|---|---|---|
+| Build commit | `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd` | Clean committed diagnostic source used by Vivado |
+| Top | `board_a_transport_diagnostic_top` | `rtl/board_a_transport_diagnostic_top.sv` |
+| FPGA target | `xc7s50csga324-1` | Vivado implementation target; no live JTAG device was present for programming |
+| Applied constraints | `config/board_a_transport_diagnostic.xdc`; vendor-recorded clock, BTN0, BLE RX, switches, LEDs, and seven-segment pins only | Constraint file and recorded Real Digital source |
+| Bitstream SHA-256 | `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b` | Local generated bitstream |
+| Implementation timing | WNS `3.355 ns`; WHS `0.156 ns`; timing closed | Vivado timing summary |
+| Utilization | 504 Slice LUTs; 481 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
+| Programming result | Not programmed; no matching JTAG target on `localhost` | Vivado Hardware Manager attempt 2026-09-01 |
+
+The diagnostic image does not verify the physical PCB revision. It encodes no Pmod connector mapping and no BLE UUID. Its LEDs and seven-segment path remain unverified until the board is reconnected, programmed, and observed.
 
 ## Vendor-source pin record
 

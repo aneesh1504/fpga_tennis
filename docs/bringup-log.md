@@ -51,3 +51,17 @@
 - Exact programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl`.
 - Programming passed on target `887235230329A`, device `xc7s50_0`; Vivado reported startup status HIGH.
 - Remaining: visually verify PCB revision, discover GATT UUIDs/properties, observe LED behavior, and run the one-byte and two-minute BLE delivery tests. C1 is not passed.
+
+## 2026-09-01 — First-pair BLE run and FPGA diagnostic build
+
+- Accepted iOS evidence through `1c1404c`: the physical iPhone verified the advertised name and GATT characteristics, acknowledged `41 0A`, and handed 6,033/6,033 frames to CoreBluetooth over 120.007 seconds at 50.272 Hz with zero local drops. The BLE module activity LED responded, but no FPGA LED was observed; this does not prove FPGA receipt.
+- Reverified the prior transport image at `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_bringup\board_a_transport_bringup.bit`; SHA-256 remained `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1`.
+- The attempt to reprogram that image was blocked before programming because Vivado found no hardware target on `localhost`; `887235230329A` was not enumerated.
+- Source review found reset and LED polarity internally consistent with the vendor documentation and applied constraints: BTN0 is inverted into the active-low synchronizer reset, released reset is synchronized for two clocks, and the discrete LEDs are active high. A live board is required to establish whether the prior no-LED observation resulted from lost volatile programming, power, reset, or another physical condition.
+- Diagnostic source/build commit: `03c53ccbb0a8a005daf6c142ca1514fcbbc23edd`; top `board_a_transport_diagnostic_top`; target `xc7s50csga324-1`.
+- Exact build command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_diagnostic.tcl`.
+- Build passed with DRC 0 errors/critical warnings and closed timing: WNS `3.355 ns`, WHS `0.156 ns`; utilization 504 LUTs, 481 registers, 0 BRAM, 0 DSP.
+- Diagnostic bitstream: `%LOCALAPPDATA%\fpga_tennis_vivado\board_a_transport_diagnostic\board_a_transport_diagnostic.bit`; SHA-256 `2b5e19b4e7b8ef81901b300152943d32b5e0e43db9a6b473f9f046c8d7a7d12b`.
+- Exact programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
+- Programming was blocked before touching a device: Vivado reported no matching targets. Startup HIGH, continuous FPGA power, PCB revision, LED behavior, and the diagnostic observation path remain physically unverified.
+- C1 is not passed. Required next physical evidence is specified exactly in `status/integration.md`, followed by an independent second phone/board pair.
