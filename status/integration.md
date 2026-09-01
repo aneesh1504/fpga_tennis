@@ -77,6 +77,9 @@
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/video/run_video_tests.ps1` | Pass 2026-08-31; all video elaboration and behavioral regressions passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File sim/game/run_game_tests.ps1` | Pass 2026-08-31; all 10 gameplay/audio simulations passed |
 | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` (sequential rerun) | Pass 2026-08-31; vectors, local Markdown links, packages, and four interface seams passed |
+| `git merge --no-edit origin/work/ios` | Pass; physical-device commit `d4adcac` merged and ancestry verified |
+| `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/build_board_a_transport_bringup.tcl` | Pass from build commit `d457063`; routed timing WNS `4.487 ns`, TNS `0`, WHS `0.116 ns`, THS `0`; DRC 0 errors/critical warnings; bitstream SHA-256 `193a255ecb25f3ad97c225c2a05859670558067e189e8aae8be314dcf59254a1` |
+| `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_bringup.tcl` | Pass; exactly one target `887235230329A`, device `xc7s50_0`, startup status HIGH |
 
 No hardware was used, programmed, wired, or measured.
 
