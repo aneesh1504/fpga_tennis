@@ -1,7 +1,7 @@
 # Integration Status
 
 - Owner: Codex orchestration/integration owner (current task)
-- State: First-pair iOS BLE evidence is merged and the timing-clean Board A diagnostic image is programmed with startup HIGH; live FPGA counters and the second pair still block C1
+- State: First-pair iOS BLE evidence is merged; the timing-clean Board A diagnostic is programmed and configuration/reset indicators pass; live FPGA counters and the second pair still block C1
 - Track document: `docs/06_integration.md`
 - Structural integration commit: This commit; exact resulting SHA is recorded in the push receipt/final handoff because a commit cannot embed its own SHA
 
@@ -95,6 +95,7 @@ Hardware evidence is limited to the explicitly recorded sessions. The earlier tr
 - Programming command: `C:\AMDDesignTools\2026.1\Vivado\bin\vivado.bat -mode batch -nolog -nojournal -notrace -source scripts/program_board_a_transport_diagnostic.tcl`.
 - Initial programming attempt: blocked before programming because no target was enumerated.
 - Programming retry at 2026-09-01 14:40 local time: pass. Windows enumerated FTDI serial `887235230329` and `COM4`; Vivado selected exactly `localhost:3121/xilinx_tcf/Xilinx/887235230329A` and `xc7s50_0`, reported `End of startup status: HIGH`, and emitted `DIAGNOSTIC_PROGRAM_PASS`. The interfaces remained enumerated after programming, establishing that the board was powered at that observation instant. Continuous power and the LED/seven-segment path require visual confirmation.
+- Physical observation after programming: LED15 and LED0 were both illuminated. This accepts the constant configuration/active-high witness and reset-deasserted indicator; no BTN0 intervention was required. Raw UART and decoded-frame observations remain pending.
 - Post-build regressions: `wsl -e sh sim/common/run_transport_wsl.sh`, `powershell -NoProfile -ExecutionPolicy Bypass -File sim/integration/run_integration_tests.ps1`, and `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_smoke.ps1` all passed on sequential rerun. The root smoke run also validated all local Markdown links in 23 files. An initial concurrent transport/root-smoke launch hit the already-recorded shared Icarus extraction race and was not an HDL failure.
 
 ### Ready-for-iOS procedure

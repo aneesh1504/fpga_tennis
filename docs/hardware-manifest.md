@@ -58,7 +58,7 @@ The PCB revision is not exposed by the JTAG device record and was not visually c
 | Utilization | 504 Slice LUTs; 481 Slice registers; 0 BRAM; 0 DSP | Vivado utilization report |
 | Programming result | Pass on retry; target `887235230329A`, device `xc7s50_0`, startup status HIGH | Vivado Hardware Manager 2026-09-01 14:40 local time |
 
-The diagnostic image does not verify the physical PCB revision. It encodes no Pmod connector mapping and no BLE UUID. Programming is verified, but its LEDs and seven-segment path remain unverified until physically observed.
+The diagnostic image does not verify the physical PCB revision. It encodes no Pmod connector mapping and no BLE UUID. Programming, the LED15 configuration/active-high witness, and the LED0 reset-deasserted indicator are physically verified; BLE-UART and decoded-frame indicators remain unverified.
 
 ## Vendor-source pin record
 

@@ -7,7 +7,7 @@ This is the orchestration index, not a shared scratchpad. Only the orchestration
 - Execution mode: Four parallel implementation tracks after F0
 - Current gate: C1/C2/C3/G1 development in parallel
 - Last completed gate/checkpoint: F0 interface freeze
-- Overall status: All four software handoffs and first-pair iOS BLE evidence are merged; the Board A diagnostic image is programmed with startup HIGH, but live FPGA observations and the second pair still leave C1/C2/C3/G1 open
+- Overall status: All four software handoffs and first-pair iOS BLE evidence are merged; the Board A diagnostic image is programmed, configuration/reset indicators pass, but live receive counters and the second pair still leave C1/C2/C3/G1 open
 - Integration owner: Codex orchestration/integration owner (current task)
 - Freeze base: `origin/main` at `b8f0578`; ancestry check passed 2026-08-30
 - Freeze implementation commit: `8255a4c52125101f8c8d033766b490975a36ffa5`
@@ -75,7 +75,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 | Gate/checkpoint | Status | Evidence summary |
 |---|---|---|
 | F0 interface freeze | **Passed** | Four consumer acceptances recorded; complete suite passed on merged review commit `2083519` |
-| C1 BLE sensor path | **Not passed**; first-pair iPhone-to-BLE stream passed and diagnostic is programmed, FPGA receipt unverified | iOS through `1c1404c`; diagnostic build `03c53cc`; target `887235230329A` startup HIGH; observations and second pair pending |
+| C1 BLE sensor path | **Not passed**; first-pair iPhone-to-BLE stream and FPGA configuration/reset indicators passed, receipt unverified | iOS through `1c1404c`; diagnostic `03c53cc`; startup HIGH, LED15 and LED0 illuminated; receive counters and second pair pending |
 | C2 two-board path | Software complete; hardware pending | Transport `1b72824` accepted; physical two-board five-minute run pending |
 | C3 video path | Software complete; hardware pending | Video `48890d9` accepted; Vivado timing and five-minute physical display run pending |
 | G1 gameplay simulation | Software suite complete; validation pending | Gameplay `5cfb1df` accepted with 10/10 simulations; recorded motion and one-phone FPGA rally pending |
@@ -140,6 +140,7 @@ The complete placeholder inventory is in `docs/hardware-manifest.md`; all values
 - One connected `xc7s50` was discovered over JTAG without programming. Board B OOC synthesis is clean after transport fix `3ad7049`; Board A synthesis is clean after gameplay fix `4a17360`, but preliminary Board A OOC timing fails with WNS `-14.368 ns`, so no timing or hardware gate is passed.
 - A constrained transport-only Board A bitstream from `d457063` implemented with WNS `4.487 ns`, DRC 0 errors/critical warnings, and programmed successfully. This is bring-up evidence only; it does not close C1 or supersede the failing full-system preliminary timing result.
 - The integration diagnostic image from `03c53cc` closes timing and exposes reset, raw UART, decoded frames, sequence, calibration/stale state, and all required error counters. It was programmed successfully on target `887235230329A` with startup HIGH after the target was reconnected; its LED/seven-segment observation path and live counters still require physical observation.
+- Physical observation after programming found LED15 and LED0 illuminated. This verifies the diagnostic configuration witness, active-high LED path, and reset deassertion on the powered board; it does not establish BLE-UART receipt.
 
 ## Next action
 

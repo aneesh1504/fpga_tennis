@@ -66,4 +66,5 @@
 - Programming was blocked before touching a device: Vivado reported no matching targets. Startup HIGH, continuous FPGA power, PCB revision, LED behavior, and the diagnostic observation path remain physically unverified.
 - Programming retry at 2026-09-01 14:40 local time passed after the board reappeared. Windows enumerated FTDI serial `887235230329` and `COM4`; Vivado selected exactly target `887235230329A` and device `xc7s50_0`, reported startup status HIGH, and emitted `DIAGNOSTIC_PROGRAM_PASS`.
 - The FTDI/JTAG interfaces remained enumerated immediately after programming, confirming power at that instant. No claim is made about continued power after that check or about the visually displayed LED/seven-segment values.
+- With the board still powered after diagnostic programming, the physical observer reported LED15 and LED0 illuminated. This verifies the configuration/active-high witness and reset deassertion. It does not verify a received BLE UART byte or decoded frame.
 - C1 is not passed. Required next physical evidence is specified exactly in `status/integration.md`, followed by an independent second phone/board pair.
