@@ -18,6 +18,7 @@ module board_a_transport_diagnostic_top (
   logic [31:0] raw_framing_error_count;
   logic [31:0] raw_byte_count;
   logic [7:0] last_raw_byte;
+  logic seen_probe_byte;
   logic raw_activity_toggle;
 
   logic sample_valid;
@@ -71,6 +72,7 @@ module board_a_transport_diagnostic_top (
     if (!rst_n) begin
       raw_byte_count <= '0;
       last_raw_byte <= '0;
+      seen_probe_byte <= 1'b0;
       raw_activity_toggle <= 1'b0;
       decoded_activity_toggle <= 1'b0;
       scan_counter <= '0;
@@ -79,6 +81,9 @@ module board_a_transport_diagnostic_top (
       if (raw_valid) begin
         raw_byte_count <= raw_byte_count + 1'b1;
         last_raw_byte <= raw_byte;
+        if (raw_byte == 8'h41) begin
+          seen_probe_byte <= 1'b1;
+        end
         raw_activity_toggle <= ~raw_activity_toggle;
       end
       if (sample_valid) begin
@@ -102,7 +107,7 @@ module board_a_transport_diagnostic_top (
     led = '0;
     led[0] = rst_n;
     led[1] = raw_activity_toggle;
-    led[2] = (last_raw_byte == 8'h41);
+    led[2] = seen_probe_byte;
     led[3] = decoded_activity_toggle;
     led[4] = debug_health.connected;
     led[5] = debug_health.calibrated;
